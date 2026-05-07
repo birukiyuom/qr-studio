@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Enterprise QR Studio - Final Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <style>
         :root { --primary: #4f46e5; --bg: #f3f4f6; --text: #1e293b; }
@@ -11,9 +12,10 @@
         
         /* Sidebar: Projects */
         .sidebar { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; height: 90vh; overflow-y: auto; }
-        .project-card { padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; cursor: pointer; font-size: 0.8rem; position: relative; transition: 0.2s; }
+        .project-card { padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; cursor: pointer; font-size: 0.8rem; position: relative; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
         .project-card:hover { border-color: var(--primary); background: #eff6ff; }
-        .del-btn { position: absolute; right: 8px; top: 8px; color: #ef4444; border: none; background: none; cursor: pointer; font-weight: bold; }
+        .del-btn { color: #ef4444; border: none; background: none; cursor: pointer; padding: 5px; transition: 0.2s; }
+        .del-btn:hover { transform: scale(1.2); }
 
         /* Main Editor */
         .editor { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
@@ -59,19 +61,19 @@
             </div>
 
             <div id="tab-social" class="hidden">
-    <div class="scroll-box">
-        <label>Instagram</label><input type="text" id="s-ig" placeholder="@username" oninput="updateLive()">
-        <label>TikTok</label><input type="text" id="s-tt" placeholder="@username" oninput="updateLive()">
-        <label>YouTube</label><input type="text" id="s-yt" placeholder="Channel Link" oninput="updateLive()">
-        <label>Telegram</label><input type="text" id="s-tg" placeholder="t.me/user" oninput="updateLive()">
-        <label>WhatsApp</label><input type="text" id="s-wa" placeholder="Phone Number" oninput="updateLive()">
-        
-        <label>Facebook</label><input type="text" id="s-fb" placeholder="facebook.com/user" oninput="updateLive()">
-        <label>LinkedIn</label><input type="text" id="s-li" placeholder="linkedin.com/in/user" oninput="updateLive()">
-        <label>X (Twitter)</label><input type="text" id="s-x" placeholder="x.com/user" oninput="updateLive()">
-        <label>Portfolio</label><input type="text" id="s-port" placeholder="yourwebsite.com" oninput="updateLive()">
-    </div>
-</div>
+                <div class="scroll-box">
+                    <label>Instagram</label><input type="text" id="s-ig" placeholder="@username" oninput="updateLive()">
+                    <label>TikTok</label><input type="text" id="s-tt" placeholder="@username" oninput="updateLive()">
+                    <label>YouTube</label><input type="text" id="s-yt" placeholder="Channel Link" oninput="updateLive()">
+                    <label>Telegram</label><input type="text" id="s-tg" placeholder="t.me/user" oninput="updateLive()">
+                    <label>WhatsApp</label><input type="text" id="s-wa" placeholder="Phone Number" oninput="updateLive()">
+                    <label>Facebook</label><input type="text" id="s-fb" placeholder="facebook.com/user" oninput="updateLive()">
+                    <label>LinkedIn</label><input type="text" id="s-li" placeholder="linkedin.com/in/user" oninput="updateLive()">
+                    <label>X (Twitter)</label><input type="text" id="s-x" placeholder="x.com/user" oninput="updateLive()">
+                    <label>Portfolio</label><input type="text" id="s-port" placeholder="yourwebsite.com" oninput="updateLive()">
+                </div>
+            </div>
+
             <div id="tab-text" class="hidden">
                 <label>Plain Text Content</label>
                 <input type="text" id="text-val" placeholder="Write something..." oninput="updateLive()">
@@ -125,62 +127,51 @@
     function switchTab(mode) {
         currentMode = mode;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        if(event) event.currentTarget.classList.add('active');
         ['url','social','text'].forEach(m => document.getElementById('tab-'+m).classList.add('hidden'));
         document.getElementById('tab-'+mode).classList.remove('hidden');
         updateLive();
     }
 
     async function updateLive() {
-    let val = "";
-    
-    if (currentMode === 'url') {
-        val = document.getElementById('url-val').value || "https://google.com";
-    } 
-    else if (currentMode === 'social') {
-        // 1. Collect all the links
-        const links = [
-    {n: 'Instagram', v: document.getElementById('s-ig').value},
-    {n: 'TikTok', v: document.getElementById('s-tt').value},
-    {n: 'YouTube', v: document.getElementById('s-yt').value},
-    {n: 'Telegram', v: document.getElementById('s-tg').value},
-    {n: 'WhatsApp', v: document.getElementById('s-wa').value},
-    {n: 'Facebook', v: document.getElementById('s-fb').value},
-    {n: 'LinkedIn', v: document.getElementById('s-li').value},
-    {n: 'X', v: document.getElementById('s-x').value},
-    {n: 'Portfolio', v: document.getElementById('s-port').value}
-].filter(link => link.v); // Only keep the ones that aren't empty
+        let val = "";
+        if (currentMode === 'url') {
+            val = document.getElementById('url-val').value || "https://google.com";
+        } else if (currentMode === 'social') {
+            const links = [
+                {n: 'Instagram', v: document.getElementById('s-ig').value},
+                {n: 'TikTok', v: document.getElementById('s-tt').value},
+                {n: 'YouTube', v: document.getElementById('s-yt').value},
+                {n: 'Telegram', v: document.getElementById('s-tg').value},
+                {n: 'WhatsApp', v: document.getElementById('s-wa').value},
+                {n: 'Facebook', v: document.getElementById('s-fb').value},
+                {n: 'LinkedIn', v: document.getElementById('s-li').value},
+                {n: 'X', v: document.getElementById('s-x').value},
+                {n: 'Portfolio', v: document.getElementById('s-port').value}
+            ].filter(link => link.v);
+            const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
+            const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
+            val = `${profilePage}?data=${encodeURIComponent(dataString)}`;
+        } else {
+            val = document.getElementById('text-val').value || " ";
+        }
 
-        // 2. Format them into a string
-        const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
+        const logoIn = document.getElementById('qr-logo-file').files[0];
+        const bgIn = document.getElementById('qr-bg-file').files[0];
+        if(logoIn) currentLogoBase64 = await readFile(logoIn);
+        if(bgIn) currentBgBase64 = await readFile(bgIn);
 
-        // 3. Point to your profile.html page
-        // Change "profile.html" to your full website URL once you host it!
-        const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
-        
-        val = `${profilePage}?data=${encodeURIComponent(dataString)}`;
-    } 
-    else {
-        val = document.getElementById('text-val').value || " ";
+        qrCode.update({
+            data: val,
+            dotsOptions: { color: document.getElementById('qr-color').value, type: document.getElementById('qr-dots').value },
+            backgroundOptions: { 
+                color: currentBgBase64 ? 'transparent' : document.getElementById('qr-bg').value,
+                source: currentBgBase64 
+            },
+            cornersSquareOptions: { type: document.getElementById('qr-eyes').value },
+            image: currentLogoBase64
+        });
     }
-
-    // ... (rest of your update code for logo/background remains the same)
-    const logoIn = document.getElementById('qr-logo-file').files[0];
-    const bgIn = document.getElementById('qr-bg-file').files[0];
-    if(logoIn) currentLogoBase64 = await readFile(logoIn);
-    if(bgIn) currentBgBase64 = await readFile(bgIn);
-
-    qrCode.update({
-        data: val,
-        dotsOptions: { color: document.getElementById('qr-color').value, type: document.getElementById('qr-dots').value },
-        backgroundOptions: { 
-            color: currentBgBase64 ? 'transparent' : document.getElementById('qr-bg').value,
-            source: currentBgBase64 
-        },
-        cornersSquareOptions: { type: document.getElementById('qr-eyes').value },
-        image: currentLogoBase64
-    });
-}
 
     function readFile(file) {
         return new Promise(res => {
@@ -190,18 +181,17 @@
         });
     }
 
-    // SAVING LOGIC
     function saveProject() {
         const project = {
             name: document.getElementById('proj-name').value || "Untitled",
             mode: currentMode,
             url: document.getElementById('url-val').value,
             socials: {
-                ig: document.getElementById('s-ig').value,
-                tt: document.getElementById('s-tt').value,
-                yt: document.getElementById('s-yt').value,
-                tg: document.getElementById('s-tg').value,
-                wa: document.getElementById('s-wa').value
+                ig: document.getElementById('s-ig').value, tt: document.getElementById('s-tt').value,
+                yt: document.getElementById('s-yt').value, tg: document.getElementById('s-tg').value,
+                wa: document.getElementById('s-wa').value, fb: document.getElementById('s-fb').value,
+                li: document.getElementById('s-li').value, x: document.getElementById('s-x').value,
+                port: document.getElementById('s-port').value
             },
             text: document.getElementById('text-val').value,
             color: document.getElementById('qr-color').value,
@@ -211,11 +201,33 @@
             logo: currentLogoBase64,
             bgImg: currentBgBase64
         };
-
         let projects = JSON.parse(localStorage.getItem('enterprise_qrs') || "[]");
         projects.unshift(project);
         localStorage.setItem('enterprise_qrs', JSON.stringify(projects));
         renderProjects();
+    }
+
+    function loadProject(i) {
+        const p = JSON.parse(localStorage.getItem('enterprise_qrs'))[i];
+        document.getElementById('proj-name').value = p.name;
+        document.getElementById('url-val').value = p.url || "";
+        document.getElementById('s-ig').value = p.socials.ig || "";
+        document.getElementById('s-tt').value = p.socials.tt || "";
+        document.getElementById('s-yt').value = p.socials.yt || "";
+        document.getElementById('s-tg').value = p.socials.tg || "";
+        document.getElementById('s-wa').value = p.socials.wa || "";
+        document.getElementById('s-fb').value = p.socials.fb || "";
+        document.getElementById('s-li').value = p.socials.li || "";
+        document.getElementById('s-x').value = p.socials.x || "";
+        document.getElementById('s-port').value = p.socials.port || "";
+        document.getElementById('text-val').value = p.text || "";
+        document.getElementById('qr-color').value = p.color;
+        document.getElementById('qr-bg').value = p.bgColor;
+        document.getElementById('qr-dots').value = p.dots;
+        document.getElementById('qr-eyes').value = p.eye;
+        currentLogoBase64 = p.logo;
+        currentBgBase64 = p.bgImg;
+        switchTab(p.mode);
     }
 
     function renderProjects() {
@@ -223,29 +235,15 @@
         const list = document.getElementById('project-list');
         list.innerHTML = projects.map((p, i) => `
             <div class="project-card" onclick="loadProject(${i})">
-                <strong>${p.name}</strong><br><small>${p.mode.toUpperCase()}</small>
-                <button class="del-btn" onclick="deleteProj(${i}, event)">×</button>
+                <div>
+                    <strong>${p.name}</strong><br>
+                    <small style="color: #94a3b8;">${p.mode.toUpperCase()}</small>
+                </div>
+                <button class="del-btn" onclick="deleteProj(${i}, event)">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
             </div>
         `).join('');
-    }
-
-    function loadProject(i) {
-        const p = JSON.parse(localStorage.getItem('enterprise_qrs'))[i];
-        document.getElementById('proj-name').value = p.name;
-        document.getElementById('url-val').value = p.url;
-        document.getElementById('s-ig').value = p.socials.ig;
-        document.getElementById('s-tt').value = p.socials.tt;
-        document.getElementById('s-yt').value = p.socials.yt;
-        document.getElementById('s-tg').value = p.socials.tg;
-        document.getElementById('s-wa').value = p.socials.wa;
-        document.getElementById('text-val').value = p.text;
-        document.getElementById('qr-color').value = p.color;
-        document.getElementById('qr-bg').value = p.bgColor;
-        document.getElementById('qr-dots').value = p.dots;
-        document.getElementById('qr-eyes').value = p.eye;
-        currentLogoBase64 = p.logo;
-        currentBgBase64 = p.bgImg;
-        updateLive();
     }
 
     function deleteProj(i, e) {
