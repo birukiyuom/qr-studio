@@ -84,7 +84,7 @@
                 <div class="grid-2">
                     <div><label>QR Color</label><input type="color" id="qr-color" value="#4f46e5" oninput="updateLive()"></div>
                     <div><label>Background</label><input type="color" id="qr-bg" value="#ffffff" oninput="updateLive()"></div>
-                    <div><label>Dot Style</label><select id="qr-dots" onchange="updateLive()"><option value="classy">Classy</option><option value="rounded">Rounded</option><option value="square">Square</option></select></div>
+                    <div><label>Dot Style</label><select id="qr-dots" onchange="updateLive()"><option value="square">Square (Fastest Scan)</option><option value="classy">Classy</option><option value="rounded">Rounded</option></select></div>
                     <div><label>Eye Shape</label><select id="qr-eyes" onchange="updateLive()"><option value="extra-rounded">Rounded</option><option value="square">Square</option></select></div>
                 </div>
 
@@ -116,11 +116,16 @@
     let currentBgBase64 = null;
 
     const qrCode = new QRCodeStyling({
-        width: 300, height: 300,
-        dotsOptions: { color: "#4f46e5", type: "classy" },
+        width: 300, 
+        height: 300,
+        type: "svg",
+        qrOptions: {
+            errorCorrectionLevel: "L" 
+        },
+        dotsOptions: { color: "#4f46e5", type: "square" },
         cornersSquareOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" },
-        imageOptions: { crossOrigin: "anonymous", margin: 10, imageSize: 0.4 }
+        imageOptions: { crossOrigin: "anonymous", margin: 10, imageSize: 0.3 }
     });
     qrCode.append(document.getElementById("canvas"));
 
@@ -163,12 +168,18 @@
 
         qrCode.update({
             data: val,
-            dotsOptions: { color: document.getElementById('qr-color').value, type: document.getElementById('qr-dots').value },
+            qrOptions: { errorCorrectionLevel: "L" },
+            dotsOptions: { 
+                color: document.getElementById('qr-color').value, 
+                type: document.getElementById('qr-dots').value 
+            },
             backgroundOptions: { 
-                color: currentBgBase64 ? 'transparent' : document.getElementById('qr-bg').value,
+                color: currentBgBase64 ? "rgba(0,0,0,0)" : document.getElementById('qr-bg').value,
                 source: currentBgBase64 
             },
-            cornersSquareOptions: { type: document.getElementById('qr-eyes').value },
+            cornersSquareOptions: { 
+                type: document.getElementById('qr-eyes').value 
+            },
             image: currentLogoBase64
         });
     }
