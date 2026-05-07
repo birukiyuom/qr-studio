@@ -15,6 +15,8 @@
         .links-list { display: flex; flex-direction: column; gap: 14px; }
         .link-btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 600; font-size: 1rem; transition: all 0.2s ease; border: 1px solid rgba(0,0,0,0.05); color: white; }
         .link-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        /* Specific Button Colors */
         .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
         .btn-whatsapp { background: #25D366; }
         .btn-telegram { background: #0088cc; }
@@ -48,12 +50,14 @@
 </div>
 
 <script>
+    // 1. Language Configuration
     let currentLang = 'en';
     const translations = {
         en: { title: "Connect with Me", sub: "Scan success! Tap a link below:", counter: "Total Profile Scans", label: "አማርኛ" },
         am: { title: "ከእኔ ጋር ይገናኙ", sub: "ስካን ተሳክቷል! ከታች ያለውን ሊንክ ይጫኑ:", counter: "አጠቃላይ የጎብኝዎች ብዛት", label: "English" }
     };
 
+    // 2. Icon Configuration
     const icons = {
         'Instagram': 'fa-brands fa-instagram',
         'Facebook': 'fa-brands fa-facebook',
@@ -63,6 +67,7 @@
         'TikTok': 'fa-brands fa-tiktok'
     };
 
+    // 3. The Toggle Function
     function toggleLang() {
         currentLang = currentLang === 'en' ? 'am' : 'en';
         document.getElementById('user-name').innerText = translations[currentLang].title;
@@ -71,6 +76,7 @@
         document.getElementById('counter-text').innerText = translations[currentLang].counter;
     }
 
+    // 4. Data Loading Logic
     const params = new URLSearchParams(window.location.search);
     const data = params.get('data');
 
@@ -86,12 +92,16 @@
                 btn.className = `link-btn ${brandClass || 'btn-generic'}`;
                 btn.href = url.startsWith('http') ? url : `https://${url}`;
                 btn.target = "_blank";
+                
+                // Attach the icon and the name
                 const iconTag = icons[name] ? `<i class="${icons[name]}"></i>` : '<i class="fa-solid fa-link"></i>';
                 btn.innerHTML = `${iconTag} ${name}`;
+                
                 container.appendChild(btn);
             }
         });
     }
 </script>
+
 </body>
 </html>
