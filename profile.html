@@ -3,107 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Business Card</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Connect</title>
     <style>
-        :root { --bg: #f0f2f5; --card: #ffffff; --text: #1c1e21; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; padding: 20px; }
-        .profile-card { background: var(--card); width: 100%; max-width: 420px; border-radius: 24px; padding: 40px 24px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.08); margin-top: 20px; }
-        .avatar { width: 90px; height: 90px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.2rem; font-weight: bold; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
-        h1 { font-size: 1.6rem; margin-bottom: 8px; color: var(--text); }
-        .subtitle { color: #65676b; margin-bottom: 35px; font-size: 0.95rem; }
-        .links-list { display: flex; flex-direction: column; gap: 14px; }
-        .link-btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 600; font-size: 1rem; transition: all 0.2s ease; border: 1px solid rgba(0,0,0,0.05); color: white; }
-        .link-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        
-        /* Specific Button Colors */
-        .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-        .btn-whatsapp { background: #25D366; }
-        .btn-telegram { background: #0088cc; }
-        .btn-facebook { background: #1877F2; }
-        .btn-youtube { background: #FF0000; }
-        .btn-tiktok { background: #000000; }
-        .btn-generic { background: #4f46e5; }
+        body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
+        .avatar { width: 80px; height: 80px; background: #4f46e5; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; margin: 0 auto 20px; overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        h1 { font-size: 1.5rem; margin-bottom: 10px; color: #1e293b; }
+        .link-btn { display: block; padding: 15px; margin: 10px 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; text-decoration: none; color: #334155; font-weight: 600; }
     </style>
 </head>
 <body>
 
-<div class="profile-card">
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-        <button onclick="toggleLang()" style="background: none; border: 1px solid #ddd; border-radius: 20px; padding: 5px 15px; font-size: 0.75rem; cursor: pointer; color: #666; font-family: 'Segoe UI', sans-serif;">
-            <i class="fa-solid fa-globe" style="margin-right: 5px;"></i> <span id="lang-label">አማርኛ</span>
-        </button>
-    </div>
-    
-    <div class="avatar">B</div>
-    <h1 id="user-name">Connect with Me</h1>
-    <p class="subtitle">Scan success! Tap a link below:</p>
-    
-    <div id="links-container" class="links-list"></div>
-
-    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
-        <p id="counter-text" style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
-            Total Profile Scans
-        </p>
-        <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fbirukiyuom.github.io%2Fqr-studio%2Fprofile.html&count_bg=%2F4f46e5&title_bg=%2F555555&icon=&icon_color=%23E7E7E7&title=Views&edge_flat=false" alt="Scan Counter">
-    </div>
+<div class="card">
+    <div id="avatar-box" class="avatar">?</div>
+    <h1 id="display-name">Loading...</h1>
+    <div id="links-container"></div>
 </div>
 
 <script>
-    // 1. Language Configuration
-    let currentLang = 'en';
-    const translations = {
-        en: { title: "Connect with Me", sub: "Scan success! Tap a link below:", counter: "Total Profile Scans", label: "አማርኛ" },
-        am: { title: "ከእኔ ጋር ይገናኙ", sub: "ስካን ተሳክቷል! ከታች ያለውን ሊንክ ይጫኑ:", counter: "አጠቃላይ የጎብኝዎች ብዛት", label: "English" }
-    };
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name') || "Welcome";
+        const logo = params.get('logo');
+        const data = params.get('data');
 
-    // 2. Icon Configuration
-    const icons = {
-    'Instagram': 'fa-brands fa-instagram',
-    'Facebook': 'fa-brands fa-facebook',
-    'WhatsApp': 'fa-brands fa-whatsapp',
-    'Telegram': 'fa-brands fa-telegram',
-    'YouTube': 'fa-brands fa-youtube',
-    'TikTok': 'fa-brands fa-tiktok',
-    'LinkedIn': 'fa-brands fa-linkedin',
-    'X': 'fa-brands fa-x-twitter',
-    'Portfolio': 'fa-solid fa-briefcase'
-};
-    // 3. The Toggle Function
-    function toggleLang() {
-        currentLang = currentLang === 'en' ? 'am' : 'en';
-        document.getElementById('user-name').innerText = translations[currentLang].title;
-        document.querySelector('.subtitle').innerText = translations[currentLang].sub;
-        document.getElementById('lang-label').innerText = translations[currentLang].label;
-        document.getElementById('counter-text').innerText = translations[currentLang].counter;
-    }
+        // 1. Set the Name
+        document.getElementById('display-name').innerText = name;
 
-    // 4. Data Loading Logic
-    const params = new URLSearchParams(window.location.search);
-    const data = params.get('data');
+        // 2. Set Avatar (Image or First Letter)
+        const avatarBox = document.getElementById('avatar-box');
+        if (logo && logo.startsWith('http')) {
+            avatarBox.innerHTML = `<img src="${logo}">`;
+        } else {
+            avatarBox.innerText = name.charAt(0).toUpperCase();
+        }
 
-    if (data) {
-        const sections = data.split(' | ');
-        const container = document.getElementById('links-container');
-        
-        sections.forEach(s => {
-            const [name, url] = s.split(': ');
-            if (url) {
-                const btn = document.createElement('a');
-                const brandClass = `btn-${name.toLowerCase()}`;
-                btn.className = `link-btn ${brandClass || 'btn-generic'}`;
-                btn.href = url.startsWith('http') ? url : `https://${url}`;
-                btn.target = "_blank";
-                
-                // Attach the icon and the name
-                const iconTag = icons[name] ? `<i class="${icons[name]}"></i>` : '<i class="fa-solid fa-link"></i>';
-                btn.innerHTML = `${iconTag} ${name}`;
-                
-                container.appendChild(btn);
-            }
-        });
+        // 3. Generate Links
+        if (data) {
+            const container = document.getElementById('links-container');
+            const parts = data.split('|');
+            parts.forEach(p => {
+                const [type, val] = p.split(':');
+                if (val && val !== 'undefined') {
+                    const btn = document.createElement('a');
+                    btn.className = 'link-btn';
+                    btn.innerText = type === 'TG' ? 'Telegram' : type === 'IG' ? 'Instagram' : 'WhatsApp';
+                    btn.href = type === 'TG' ? `https://t.me/${val}` : type === 'IG' ? `https://instagram.com/${val}` : `https://wa.me/${val}`;
+                    container.appendChild(btn);
+                }
+            });
+        }
     }
 </script>
-
 </body>
 </html>
