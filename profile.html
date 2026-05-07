@@ -8,7 +8,7 @@
     <style>
         :root {
             --primary: #4f46e5;
-            --bg: #0f172a; /* Dark professional theme */
+            --bg: #0f172a; 
             --card: #1e293b;
             --text: #f8fafc;
         }
@@ -36,7 +36,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* LOGO SECTION */
         .logo-container {
             width: 100px;
             height: 100px;
@@ -53,11 +52,10 @@
         .logo-container img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            padding: 10px;
+            object-fit: cover; /* Changed to cover for a better look */
         }
 
-        h1 { font-size: 1.5rem; margin-bottom: 5px; font-weight: 700; }
+        h1 { font-size: 1.5rem; margin: 0 0 5px 0; font-weight: 700; }
         .slogan { color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; display: block; font-style: italic; }
 
         .links-container { display: grid; gap: 12px; }
@@ -82,9 +80,9 @@
             border-color: transparent;
         }
 
-        .btn-link i { font-size: 1.2rem; width: 25px; }
+        .btn-link i { font-size: 1.2rem; width: 25px; text-align: center; }
 
-        .footer { margin-top: 30px; font-size: 0.7rem; color: #475569; letter-spacing: 2px; }
+        .footer { margin-top: 30px; font-size: 0.7rem; color: #475569; letter-spacing: 2px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -100,7 +98,7 @@
     <div class="links-container" id="p-links">
         </div>
 
-    <div class="footer">POWERED BY BIRUK DESIGN</div>
+    <div class="footer">Powered by Biruk Design</div>
 </div>
 
 <script>
@@ -108,29 +106,42 @@
         const params = new URLSearchParams(window.location.search);
         
         // 1. Get Data from URL
-        const dataStr = params.get('data');
-        const customLogo = params.get('logo'); // If you add a logo URL to the QR
+        const customName = params.get('name');
+        const customLogo = params.get('logo');
         const customSlogan = params.get('slogan');
+        const dataStr = params.get('data');
 
-        // 2. Apply Custom Logo if provided
-        if (customLogo) {
-            document.getElementById('logo-box').innerHTML = `<img src="${customLogo}" alt="Logo">`;
+        // 2. Apply Custom Name
+        if (customName) {
+            document.getElementById('p-name').innerText = decodeURIComponent(customName);
+            document.title = decodeURIComponent(customName); // Updates browser tab title
         }
 
-        // 3. Apply Slogan
+        // 3. Apply Custom Logo
+        if (customLogo && customLogo !== "null" && customLogo !== "") {
+            document.getElementById('logo-box').innerHTML = `<img src="${decodeURIComponent(customLogo)}" alt="Logo">`;
+        }
+
+        // 4. Apply Slogan
         if (customSlogan) {
-            document.getElementById('p-slogan').innerText = customSlogan;
+            document.getElementById('p-slogan').innerText = decodeURIComponent(customSlogan);
         }
 
-        // 4. Build Links
+        // 5. Build Links
         if (dataStr) {
             const container = document.getElementById('p-links');
             const sections = decodeURIComponent(dataStr).split(' | ');
             
             const icons = {
-                'Instagram': 'fa-instagram', 'TikTok': 'fa-tiktok', 'YouTube': 'fa-youtube',
-                'Telegram': 'fa-telegram', 'WhatsApp': 'fa-whatsapp', 'Facebook': 'fa-facebook',
-                'LinkedIn': 'fa-linkedin', 'X': 'fa-x-twitter', 'Portfolio': 'fa-globe'
+                'Instagram': 'fa-instagram', 
+                'TikTok': 'fa-tiktok', 
+                'YouTube': 'fa-youtube',
+                'Telegram': 'fa-telegram', 
+                'WhatsApp': 'fa-whatsapp', 
+                'Facebook': 'fa-facebook',
+                'LinkedIn': 'fa-linkedin', 
+                'X': 'fa-x-twitter', 
+                'Portfolio': 'fa-globe'
             };
 
             sections.forEach(item => {
@@ -139,13 +150,23 @@
 
                 const a = document.createElement('a');
                 a.className = 'btn-link';
-                a.href = val.includes('http') ? val : `https://${val}`;
+                
+                // Logic for WhatsApp numbers vs links
+                if (name === 'WhatsApp' && !val.includes('http')) {
+                    a.href = `https://wa.me/${val.replace(/\s+/g, '')}`;
+                } else {
+                    a.href = val.includes('http') ? val : `https://${val}`;
+                }
+                
                 a.target = "_blank";
                 
-                const icon = icons[name] || 'fa-link';
-                a.innerHTML = `<i class="fa-brands ${icon} fa-solid"></i> ${name}`;
+                const iconClass = icons[name] ? `fa-brands ${icons[name]}` : 'fa-solid fa-link';
+                a.innerHTML = `<i class="${iconClass}"></i> ${name}`;
                 container.appendChild(a);
             });
+        } else {
+            // Fallback message if no links are provided
+            document.getElementById('p-links').innerHTML = `<p style="font-size:0.8rem; color:#64748b;">No contact links provided.</p>`;
         }
     }
 </script>
