@@ -64,7 +64,18 @@
                 <label>Destination Link</label>
                 <input type="text" id="url-val" placeholder="https://example.com" oninput="updateLive()">
             </div>
+<div id="tab-social" class="hidden">
+    <label>Business Name</label>
+    <input type="text" id="client-name" placeholder="E.g. Burka Coffee" oninput="updateLive()">
 
+    <label>Company Slogan</label>
+    <input type="text" id="client-slogan" placeholder="E.g. Quality Design & Survey" oninput="updateLive()">
+    
+    <label>Logo URL (Direct Image Link)</label>
+    <input type="text" id="client-logo-url" placeholder="https://link-to-your-logo.png" oninput="updateLive()">
+    
+    <div class="scroll-box">
+        <label>Instagram</label><input type="text" id="s-ig" ...
             <div id="tab-social" class="hidden">
                 <div class="scroll-box">
                     <label>Instagram</label><input type="text" id="s-ig" placeholder="@username" oninput="updateLive()">
@@ -203,21 +214,30 @@
         if (currentMode === 'url') {
             val = document.getElementById('url-val').value || "https://google.com";
         } else if (currentMode === 'social') {
-            const links = [
-                {n: 'Instagram', v: document.getElementById('s-ig').value},
-                {n: 'TikTok', v: document.getElementById('s-tt').value},
-                {n: 'YouTube', v: document.getElementById('s-yt').value},
-                {n: 'Telegram', v: document.getElementById('s-tg').value},
-                {n: 'WhatsApp', v: document.getElementById('s-wa').value},
-                {n: 'Facebook', v: document.getElementById('s-fb').value},
-                {n: 'LinkedIn', v: document.getElementById('s-li').value},
-                {n: 'X', v: document.getElementById('s-x').value},
-                {n: 'Portfolio', v: document.getElementById('s-port').value}
-            ].filter(link => link.v);
-            const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
-            const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
-            val = `${profilePage}?data=${encodeURIComponent(dataString)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}`;
-        } else {
+    const links = [
+        {n: 'Instagram', v: document.getElementById('s-ig').value},
+        {n: 'TikTok', v: document.getElementById('s-tt').value},
+        {n: 'YouTube', v: document.getElementById('s-yt').value},
+        {n: 'Telegram', v: document.getElementById('s-tg').value},
+        {n: 'WhatsApp', v: document.getElementById('s-wa').value},
+        {n: 'Facebook', v: document.getElementById('s-fb').value},
+        {n: 'LinkedIn', v: document.getElementById('s-li').value},
+        {n: 'X', v: document.getElementById('s-x').value},
+        {n: 'Portfolio', v: document.getElementById('s-port').value}
+    ].filter(link => link.v);
+
+    const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
+    const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
+    
+    // 2. CAPTURE THE NEW VALUES
+    const name = document.getElementById('client-name').value || "Enterprise Hub";
+    const slogan = document.getElementById('client-slogan').value || "Professional Services";
+    const logoURL = document.getElementById('client-logo-url').value || "";
+
+    // 3. ATTACH THEM TO THE URL
+    val = `${profilePage}?name=${encodeURIComponent(name)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}&data=${encodeURIComponent(dataString)}`;
+
+} else {
             val = document.getElementById('text-val').value || " ";
         }
 
