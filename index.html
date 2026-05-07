@@ -216,7 +216,7 @@
             ].filter(link => link.v);
             const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
             const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
-            val = `${profilePage}?data=${encodeURIComponent(dataString)}`;
+            val = `${profilePage}?data=${encodeURIComponent(dataString)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}`;
         } else {
             val = document.getElementById('text-val').value || " ";
         }
