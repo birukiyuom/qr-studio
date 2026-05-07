@@ -3,77 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Hub</title>
+    <title>Professional Identity Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .profile-card { background: white; width: 90%; max-width: 400px; border-radius: 30px; padding: 40px 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center; }
-        
-        .avatar-circle { width: 100px; height: 100px; background: linear-gradient(135deg, #4f46e5, #9333ea); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold; overflow: hidden; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
-        
-        h1 { margin: 0 0 5px 0; color: #1e293b; font-size: 1.6rem; }
-        p { color: #64748b; font-size: 0.9rem; margin-bottom: 30px; }
-        
-        .social-link { display: flex; align-items: center; justify-content: center; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; text-decoration: none; padding: 16px; border-radius: 16px; margin-bottom: 12px; font-weight: 600; transition: 0.2s; }
-        .social-link:hover { background: #4f46e5; color: white; transform: translateY(-2px); }
-        .social-link i { font-size: 1.2rem; }
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #4f46e5;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+            padding: 40px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Top Decorative Element */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 120px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            z-index: 0;
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .avatar-wrapper {
+            width: 110px;
+            height: 110px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 5px solid white;
+            overflow: hidden;
+        }
+
+        .avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin: 0 0 8px 0;
+            font-weight: 800;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .links-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .social-card {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f1f5f9;
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .social-card:hover {
+            background: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+
+        .social-card i {
+            font-size: 1.25rem;
+            width: 35px;
+            color: var(--primary);
+        }
+
+        .footer-brand {
+            margin-top: 40px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
 
-<div class="profile-card">
-    <div id="avatar" class="avatar-circle">?</div>
-    <h1 id="client-name-display">Loading Identity...</h1>
-    <p>Scan successful! Connect via the links below:</p>
-    <div id="links-box"></div>
+<div class="container">
+    <div class="profile-content">
+        <div class="avatar-wrapper" id="p-avatar">
+            </div>
+        
+        <h1 id="p-name">Connect with Me</h1>
+        <span class="tagline" id="p-tagline">Scan Successful</span>
+
+        <div class="links-grid" id="p-links">
+            </div>
+
+        <div class="footer-brand">
+            Powered by Enterprise QR Studio
+        </div>
+    </div>
 </div>
 
 <script>
-    window.onload = function() {
-        const params = new URLSearchParams(window.location.search);
-        const name = params.get('name') || "User";
-        const logo = params.get('logo');
-        const data = params.get('data');
-
-        // 1. Set Name
-        document.getElementById('client-name-display').innerText = name;
-
-        // 2. Set Avatar Logic
-        const avatarDiv = document.getElementById('avatar');
-        if (logo && logo.includes('http')) {
-            avatarDiv.innerHTML = `<img src="${logo}" alt="logo">`;
-        } else {
-            avatarDiv.innerText = name.charAt(0).toUpperCase();
-        }
-
-        // 3. Render Links
-        if (data) {
-            const container = document.getElementById('links-box');
-            const items = data.split(',');
+    function initProfile() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataString = urlParams.get('data');
+        
+        // 1. Setup Name & Avatar
+        // We try to guess the name from the "Portfolio" link or first link
+        let displayName = "Professional Hub";
+        
+        if (dataString) {
+            const links = decodeURIComponent(dataString).split(' | ');
+            const container = document.getElementById('p-links');
             
-            const icons = { 'TG': 'fa-telegram', 'IG': 'fa-instagram', 'FB': 'fa-facebook', 'WA': 'fa-whatsapp' };
-            const names = { 'TG': 'Telegram', 'IG': 'Instagram', 'FB': 'Facebook', 'WA': 'WhatsApp' };
-            const urls = { 
-                'TG': v => `https://t.me/${v.replace('@','')}`, 
-                'IG': v => `https://instagram.com/${v.replace('@','')}`, 
-                'FB': v => v.includes('http') ? v : `https://facebook.com/${v}`,
-                'WA': v => `https://wa.me/${v}`
+            // Map icons to labels
+            const iconMap = {
+                'Instagram': 'fa-instagram',
+                'TikTok': 'fa-tiktok',
+                'YouTube': 'fa-youtube',
+                'Telegram': 'fa-telegram',
+                'WhatsApp': 'fa-whatsapp',
+                'Facebook': 'fa-facebook',
+                'LinkedIn': 'fa-linkedin',
+                'X': 'fa-x-twitter',
+                'Portfolio': 'fa-globe'
             };
 
-            items.forEach(item => {
-                const [key, val] = item.split(':');
-                if (val && val !== 'undefined' && val.trim() !== "") {
-                    const a = document.createElement('a');
-                    a.className = 'social-link';
-                    a.href = urls[key](val);
-                    a.target = "_blank";
-                    a.innerHTML = `<i class="fa-brands ${icons[key]}"></i> ${names[key]}`;
-                    container.appendChild(a);
-                }
+            links.forEach(link => {
+                const [platform, value] = link.split(': ');
+                if (!value) return;
+
+                // Create the Link Card
+                const card = document.createElement('a');
+                card.className = 'social-card';
+                card.href = formatURL(platform, value);
+                card.target = "_blank";
+                
+                const iconClass = iconMap[platform] || 'fa-link';
+                card.innerHTML = `<i class="fa-brands ${iconClass} fa-solid"></i> <span>${platform}</span>`;
+                
+                container.appendChild(card);
             });
         }
+
+        // Set Dynamic Avatar Letter
+        document.getElementById('p-avatar').innerText = displayName.charAt(0);
     }
+
+    function formatURL(platform, value) {
+        if (value.startsWith('http')) return value;
+        
+        switch(platform) {
+            case 'Instagram': return `https://instagram.com/${value.replace('@','')}`;
+            case 'Telegram': return value.startsWith('t.me') ? `https://${value}` : `https://t.me/${value}`;
+            case 'TikTok': return `https://tiktok.com/@${value.replace('@','')}`;
+            case 'WhatsApp': return `https://wa.me/${value.replace(/[^0-9]/g, '')}`;
+            default: return `https://${value}`;
+        }
+    }
+
+    window.onload = initProfile;
 </script>
+
 </body>
 </html>
