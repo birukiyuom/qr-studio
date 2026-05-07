@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Social Profile</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f3f4f6; display: flex; justify-content: center; padding: 20px; }
+        .profile-card { background: white; width: 100%; max-width: 400px; border-radius: 30px; padding: 40px 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .avatar { width: 100px; height: 100px; background: #4f46e5; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; font-weight: bold; }
+        h1 { font-size: 1.5rem; margin-bottom: 5px; }
+        p { color: #64748b; margin-bottom: 30px; }
+        .link-btn { display: block; background: #4f46e5; color: white; text-decoration: none; padding: 15px; margin-bottom: 12px; border-radius: 12px; font-weight: 600; transition: 0.2s; }
+        .link-btn:hover { transform: scale(1.02); background: #4338ca; }
+    </style>
+</head>
+<body>
+
+<div class="profile-card">
+    <div class="avatar">B</div>
+    <h1 id="user-name">Welcome!</h1>
+    <p>Find me on social media:</p>
+    <div id="links-container"></div>
+</div>
+
+<script>
+    // This script reads the QR data from the URL
+    const params = new URLSearchParams(window.location.search);
+    const data = params.get('data');
+
+    if (data) {
+        const sections = data.split(' | ');
+        const container = document.getElementById('links-container');
+        
+        sections.forEach(s => {
+            const [name, url] = s.split(': ');
+            if (url) {
+                const btn = document.createElement('a');
+                btn.className = 'link-btn';
+                btn.href = url.startsWith('http') ? url : `https://${url}`;
+                btn.target = "_blank";
+                btn.innerText = `Follow on ${name}`;
+                container.appendChild(btn);
+            }
+        });
+    }
+</script>
+</body>
+</html>
