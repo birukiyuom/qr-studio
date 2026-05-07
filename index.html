@@ -59,15 +59,19 @@
             </div>
 
             <div id="tab-social" class="hidden">
-                <div class="scroll-box">
-                    <label>Instagram</label><input type="text" id="s-ig" placeholder="@username" oninput="updateLive()">
-                    <label>TikTok</label><input type="text" id="s-tt" placeholder="@username" oninput="updateLive()">
-                    <label>YouTube</label><input type="text" id="s-yt" placeholder="Channel Link" oninput="updateLive()">
-                    <label>Telegram</label><input type="text" id="s-tg" placeholder="t.me/user" oninput="updateLive()">
-                    <label>WhatsApp</label><input type="text" id="s-wa" placeholder="Phone Number" oninput="updateLive()">
-                </div>
-            </div>
-
+    <div class="scroll-box">
+        <label>Instagram</label><input type="text" id="s-ig" placeholder="@username" oninput="updateLive()">
+        <label>TikTok</label><input type="text" id="s-tt" placeholder="@username" oninput="updateLive()">
+        <label>YouTube</label><input type="text" id="s-yt" placeholder="Channel Link" oninput="updateLive()">
+        <label>Telegram</label><input type="text" id="s-tg" placeholder="t.me/user" oninput="updateLive()">
+        <label>WhatsApp</label><input type="text" id="s-wa" placeholder="Phone Number" oninput="updateLive()">
+        
+        <label>Facebook</label><input type="text" id="s-fb" placeholder="facebook.com/user" oninput="updateLive()">
+        <label>LinkedIn</label><input type="text" id="s-li" placeholder="linkedin.com/in/user" oninput="updateLive()">
+        <label>X (Twitter)</label><input type="text" id="s-x" placeholder="x.com/user" oninput="updateLive()">
+        <label>Portfolio</label><input type="text" id="s-port" placeholder="yourwebsite.com" oninput="updateLive()">
+    </div>
+</div>
             <div id="tab-text" class="hidden">
                 <label>Plain Text Content</label>
                 <input type="text" id="text-val" placeholder="Write something..." oninput="updateLive()">
@@ -136,12 +140,16 @@
     else if (currentMode === 'social') {
         // 1. Collect all the links
         const links = [
-            {n: 'Instagram', v: document.getElementById('s-ig').value},
-            {n: 'TikTok', v: document.getElementById('s-tt').value},
-            {n: 'YouTube', v: document.getElementById('s-yt').value},
-            {n: 'Telegram', v: document.getElementById('s-tg').value},
-            {n: 'WhatsApp', v: document.getElementById('s-wa').value}
-        ].filter(link => link.v); // Only keep the ones that aren't empty
+    {n: 'Instagram', v: document.getElementById('s-ig').value},
+    {n: 'TikTok', v: document.getElementById('s-tt').value},
+    {n: 'YouTube', v: document.getElementById('s-yt').value},
+    {n: 'Telegram', v: document.getElementById('s-tg').value},
+    {n: 'WhatsApp', v: document.getElementById('s-wa').value},
+    {n: 'Facebook', v: document.getElementById('s-fb').value},
+    {n: 'LinkedIn', v: document.getElementById('s-li').value},
+    {n: 'X', v: document.getElementById('s-x').value},
+    {n: 'Portfolio', v: document.getElementById('s-port').value}
+].filter(link => link.v); // Only keep the ones that aren't empty
 
         // 2. Format them into a string
         const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
