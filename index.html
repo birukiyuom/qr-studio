@@ -24,7 +24,7 @@
         .tab.active { background: #fff; color: var(--primary); border-bottom-color: var(--primary); }
         
         .content { padding: 25px; flex-grow: 1; overflow-y: auto; }
-        .scroll-box { max-height: 280px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; }
+        .scroll-box { max-height: 350px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; border-top: 1px solid #f1f5f9; padding-top: 10px; }
 
         /* Inputs */
         label { display: block; font-size: 0.65rem; font-weight: 800; margin-bottom: 6px; color: #64748b; text-transform: uppercase; margin-top: 10px; }
@@ -64,19 +64,23 @@
                 <label>Destination Link</label>
                 <input type="text" id="url-val" placeholder="https://example.com" oninput="updateLive()">
             </div>
-<div id="tab-social" class="hidden">
-    <label>Business Name</label>
-    <input type="text" id="client-name" placeholder="E.g. Burka Coffee" oninput="updateLive()">
 
-    <label>Company Slogan</label>
-    <input type="text" id="client-slogan" placeholder="E.g. Quality Design & Survey" oninput="updateLive()">
-    
-    <label>Logo URL (Direct Image Link)</label>
-    <input type="text" id="client-logo-url" placeholder="https://link-to-your-logo.png" oninput="updateLive()">
-    
-    <div class="scroll-box">
-        <label>Instagram</label><input type="text" id="s-ig" ...
             <div id="tab-social" class="hidden">
+                <label style="color:var(--primary)">Landing Page Branding</label>
+                <div class="grid-2">
+                    <div>
+                        <label>Display Name</label>
+                        <input type="text" id="client-name" placeholder="E.g. Burka Coffee" oninput="updateLive()">
+                    </div>
+                    <div>
+                        <label>Tagline/Slogan</label>
+                        <input type="text" id="client-slogan" placeholder="E.g. Quality Design" oninput="updateLive()">
+                    </div>
+                </div>
+                <label>Logo URL (Direct Image Link)</label>
+                <input type="text" id="client-logo-url" placeholder="https://site.com/logo.png" oninput="updateLive()">
+
+                <label style="color:var(--primary)">Social Connections</label>
                 <div class="scroll-box">
                     <label>Instagram</label><input type="text" id="s-ig" placeholder="@username" oninput="updateLive()">
                     <label>TikTok</label><input type="text" id="s-tt" placeholder="@username" oninput="updateLive()">
@@ -103,9 +107,6 @@
                 <button type="button" class="preset-btn" onclick="applyPreset('burka')" style="background: #78350f;">
                     <i class="fa-solid fa-mug-hot"></i> BURKA COFFEE
                 </button>
-                <button type="button" class="preset-btn" onclick="applyPreset('survey')" style="background: #1e293b;">
-                    <i class="fa-solid fa-compass-drafting"></i> TECH SURVEY
-                </button>
             </div>
 
             <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;">
@@ -131,7 +132,7 @@
                     </div>
                 </div>
 
-                <label style="margin-top:15px">Logo & Background Image</label>
+                <label style="margin-top:15px">Internal QR Assets (Optional)</label>
                 <div class="grid-2">
                     <div><label>Center Logo</label><input type="file" id="qr-logo-file" accept="image/*" onchange="updateLive()"></div>
                     <div><label>Background</label><input type="file" id="qr-bg-file" accept="image/*" onchange="updateLive()"></div>
@@ -166,7 +167,7 @@
         width: 300, 
         height: 300,
         type: "svg",
-        qrOptions: { errorCorrectionLevel: "H" }, // High correction for logos
+        qrOptions: { errorCorrectionLevel: "H" },
         dotsOptions: { color: "#4f46e5", type: "square" },
         cornersSquareOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" },
@@ -177,7 +178,9 @@
     function switchTab(mode) {
         currentMode = mode;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        const activeTab = Array.from(document.querySelectorAll('.tab')).find(t => t.innerText.toLowerCase().includes(mode.substring(0,3)));
+        if(activeTab) activeTab.classList.add('active');
+        
         ['url','social','text'].forEach(m => document.getElementById('tab-'+m).classList.add('hidden'));
         document.getElementById('tab-'+mode).classList.remove('hidden');
         updateLive();
@@ -199,13 +202,6 @@
             document.getElementById('qr-eyes').value = "square";
             document.getElementById('proj-name').value = "Burka Coffee Branding";
         }
-        else if (brand === 'survey') {
-            document.getElementById('qr-color').value = "#000000";
-            document.getElementById('qr-bg').value = "#ffffff";
-            document.getElementById('qr-dots').value = "square";
-            document.getElementById('qr-eyes').value = "square";
-            document.getElementById('proj-name').value = "Technical Site Survey";
-        }
         updateLive();
     }
 
@@ -214,30 +210,27 @@
         if (currentMode === 'url') {
             val = document.getElementById('url-val').value || "https://google.com";
         } else if (currentMode === 'social') {
-    const links = [
-        {n: 'Instagram', v: document.getElementById('s-ig').value},
-        {n: 'TikTok', v: document.getElementById('s-tt').value},
-        {n: 'YouTube', v: document.getElementById('s-yt').value},
-        {n: 'Telegram', v: document.getElementById('s-tg').value},
-        {n: 'WhatsApp', v: document.getElementById('s-wa').value},
-        {n: 'Facebook', v: document.getElementById('s-fb').value},
-        {n: 'LinkedIn', v: document.getElementById('s-li').value},
-        {n: 'X', v: document.getElementById('s-x').value},
-        {n: 'Portfolio', v: document.getElementById('s-port').value}
-    ].filter(link => link.v);
+            const links = [
+                {n: 'Instagram', v: document.getElementById('s-ig').value},
+                {n: 'TikTok', v: document.getElementById('s-tt').value},
+                {n: 'YouTube', v: document.getElementById('s-yt').value},
+                {n: 'Telegram', v: document.getElementById('s-tg').value},
+                {n: 'WhatsApp', v: document.getElementById('s-wa').value},
+                {n: 'Facebook', v: document.getElementById('s-fb').value},
+                {n: 'LinkedIn', v: document.getElementById('s-li').value},
+                {n: 'X', v: document.getElementById('s-x').value},
+                {n: 'Portfolio', v: document.getElementById('s-port').value}
+            ].filter(link => link.v);
 
-    const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
-    const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
-    
-    // 2. CAPTURE THE NEW VALUES
-    const name = document.getElementById('client-name').value || "Enterprise Hub";
-    const slogan = document.getElementById('client-slogan').value || "Professional Services";
-    const logoURL = document.getElementById('client-logo-url').value || "";
+            const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
+            const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
+            
+            const name = document.getElementById('client-name').value || "Enterprise Hub";
+            const slogan = document.getElementById('client-slogan').value || "Innovative Solutions";
+            const logoURL = document.getElementById('client-logo-url').value || "";
 
-    // 3. ATTACH THEM TO THE URL
-    val = `${profilePage}?name=${encodeURIComponent(name)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}&data=${encodeURIComponent(dataString)}`;
-
-} else {
+            val = `${profilePage}?name=${encodeURIComponent(name)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}&data=${encodeURIComponent(dataString)}`;
+        } else {
             val = document.getElementById('text-val').value || " ";
         }
 
@@ -271,10 +264,6 @@
             name: document.getElementById('proj-name').value || "Untitled",
             mode: currentMode,
             url: document.getElementById('url-val').value,
-            socials: {
-                ig: document.getElementById('s-ig').value, tt: document.getElementById('s-tt').value,
-                tg: document.getElementById('s-tg').value, port: document.getElementById('s-port').value
-            },
             color: document.getElementById('qr-color').value,
             bgColor: document.getElementById('qr-bg').value,
             dots: document.getElementById('qr-dots').value,
