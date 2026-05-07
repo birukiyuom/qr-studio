@@ -20,15 +20,16 @@
         /* Main Editor */
         .editor { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; height: 90vh; }
         .tabs { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
-        .tab { flex: 1; padding: 18px; text-align: center; cursor: pointer; font-weight: 700; font-size: 0.75rem; color: #64748b; border-bottom: 3px solid transparent; }
+        .tab { flex: 1; padding: 18px; text-align: center; cursor: pointer; font-weight: 700; font-size: 0.75rem; color: #64748b; border-bottom: 3px solid transparent; transition: 0.2s; }
         .tab.active { background: #fff; color: var(--primary); border-bottom-color: var(--primary); }
         
         .content { padding: 25px; flex-grow: 1; overflow-y: auto; }
-        .scroll-box { max-height: 350px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; border-top: 1px solid #f1f5f9; padding-top: 10px; }
+        .scroll-box { max-height: 300px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px; border: 1px solid #f1f5f9; border-radius: 8px; padding: 10px; }
 
         /* Inputs */
         label { display: block; font-size: 0.65rem; font-weight: 800; margin-bottom: 6px; color: #64748b; text-transform: uppercase; margin-top: 10px; }
         input, select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; box-sizing: border-box; }
+        input:focus { outline: none; border-color: var(--primary); ring: 2px var(--primary); }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         /* Presets */
@@ -54,9 +55,9 @@
 
     <div class="editor">
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('url')">WEBSITE</div>
-            <div class="tab" onclick="switchTab('social')">SOCIAL HUB</div>
-            <div class="tab" onclick="switchTab('text')">MESSAGE</div>
+            <div class="tab active" id="tab-btn-url" onclick="switchTab('url')">WEBSITE</div>
+            <div class="tab" id="tab-btn-social" onclick="switchTab('social')">SOCIAL HUB</div>
+            <div class="tab" id="tab-btn-text" onclick="switchTab('text')">MESSAGE</div>
         </div>
 
         <div class="content">
@@ -134,8 +135,8 @@
 
                 <label style="margin-top:15px">Internal QR Assets (Optional)</label>
                 <div class="grid-2">
-                    <div><label>Center Logo</label><input type="file" id="qr-logo-file" accept="image/*" onchange="updateLive()"></div>
-                    <div><label>Background</label><input type="file" id="qr-bg-file" accept="image/*" onchange="updateLive()"></div>
+                    <div><label>Center Logo</label><input type="file" id="qr-logo-file" accept="image/*" onchange="handleFile(event, 'logo')"></div>
+                    <div><label>Background</label><input type="file" id="qr-bg-file" accept="image/*" onchange="handleFile(event, 'bg')"></div>
                 </div>
             </div>
 
@@ -171,18 +172,21 @@
         dotsOptions: { color: "#4f46e5", type: "square" },
         cornersSquareOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" },
-        imageOptions: { crossOrigin: "anonymous", margin: 8, imageSize: 0.4 }
+        imageOptions: { crossOrigin: "anonymous", margin: 5, imageSize: 0.4 }
     });
+    
     qrCode.append(document.getElementById("canvas"));
 
     function switchTab(mode) {
         currentMode = mode;
+        // Update Tabs UI
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        const activeTab = Array.from(document.querySelectorAll('.tab')).find(t => t.innerText.toLowerCase().includes(mode.substring(0,3)));
-        if(activeTab) activeTab.classList.add('active');
+        document.getElementById(`tab-btn-${mode}`).classList.add('active');
         
+        // Switch visibility
         ['url','social','text'].forEach(m => document.getElementById('tab-'+m).classList.add('hidden'));
         document.getElementById('tab-'+mode).classList.remove('hidden');
+        
         updateLive();
     }
 
@@ -193,7 +197,6 @@
             document.getElementById('qr-dots').value = "square";
             document.getElementById('qr-eyes').value = "extra-rounded";
             document.getElementById('proj-name').value = "Biruk Design Portfolio";
-            document.getElementById('s-tg').value = "t.me/biruk_girma";
         } 
         else if (brand === 'burka') {
             document.getElementById('qr-color').value = "#3e2723";
@@ -205,7 +208,19 @@
         updateLive();
     }
 
-    async function updateLive() {
+    async function handleFile(event, type) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (type === 'logo') currentLogoBase64 = e.target.result;
+            if (type === 'bg') currentBgBase64 = e.target.result;
+            updateLive();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function updateLive() {
         let val = "";
         if (currentMode === 'url') {
             val = document.getElementById('url-val').value || "https://google.com";
@@ -223,6 +238,7 @@
             ].filter(link => link.v);
 
             const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
+            // Make sure this URL points to wherever you host your profile.html
             const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
             
             const name = document.getElementById('client-name').value || "Enterprise Hub";
@@ -234,28 +250,15 @@
             val = document.getElementById('text-val').value || " ";
         }
 
-        const logoIn = document.getElementById('qr-logo-file').files[0];
-        const bgIn = document.getElementById('qr-bg-file').files[0];
-        if(logoIn) currentLogoBase64 = await readFile(logoIn);
-        if(bgIn) currentBgBase64 = await readFile(bgIn);
-
         qrCode.update({
             data: val,
             dotsOptions: { color: document.getElementById('qr-color').value, type: document.getElementById('qr-dots').value },
             backgroundOptions: { 
-                color: currentBgBase64 ? "rgba(0,0,0,0)" : document.getElementById('qr-bg').value,
+                color: document.getElementById('qr-bg').value,
                 source: currentBgBase64 
             },
-            cornersSquareOptions: { type: document.getElementById('qr-eyes').value },
+            cornersSquareOptions: { type: document.getElementById('qr-eyes').value, color: document.getElementById('qr-color').value },
             image: currentLogoBase64
-        });
-    }
-
-    function readFile(file) {
-        return new Promise(res => {
-            const r = new FileReader();
-            r.onload = () => res(r.result);
-            r.readAsDataURL(file);
         });
     }
 
@@ -263,17 +266,25 @@
         const project = {
             name: document.getElementById('proj-name').value || "Untitled",
             mode: currentMode,
-            url: document.getElementById('url-val').value,
-            color: document.getElementById('qr-color').value,
-            bgColor: document.getElementById('qr-bg').value,
-            dots: document.getElementById('qr-dots').value,
-            eye: document.getElementById('qr-eyes').value
+            data: {
+                url: document.getElementById('url-val').value,
+                clientName: document.getElementById('client-name').value,
+                clientSlogan: document.getElementById('client-slogan').value,
+                clientLogo: document.getElementById('client-logo-url').value,
+                text: document.getElementById('text-val').value
+            },
+            design: {
+                color: document.getElementById('qr-color').value,
+                bgColor: document.getElementById('qr-bg').value,
+                dots: document.getElementById('qr-dots').value,
+                eye: document.getElementById('qr-eyes').value
+            }
         };
         let projects = JSON.parse(localStorage.getItem('enterprise_qrs') || "[]");
         projects.unshift(project);
         localStorage.setItem('enterprise_qrs', JSON.stringify(projects));
         renderProjects();
-        alert("Project Saved to Sidebar!");
+        alert("Project Saved!");
     }
 
     function renderProjects() {
@@ -290,10 +301,20 @@
     function loadProject(i) {
         const p = JSON.parse(localStorage.getItem('enterprise_qrs'))[i];
         document.getElementById('proj-name').value = p.name;
-        document.getElementById('qr-color').value = p.color;
-        document.getElementById('qr-bg').value = p.bgColor;
-        document.getElementById('qr-dots').value = p.dots;
-        document.getElementById('qr-eyes').value = p.eye;
+        document.getElementById('qr-color').value = p.design.color;
+        document.getElementById('qr-bg').value = p.design.bgColor;
+        document.getElementById('qr-dots').value = p.design.dots;
+        document.getElementById('qr-eyes').value = p.design.eye;
+        
+        // Restore specific tab data
+        if(p.mode === 'url') document.getElementById('url-val').value = p.data.url;
+        if(p.mode === 'social') {
+            document.getElementById('client-name').value = p.data.clientName;
+            document.getElementById('client-slogan').value = p.data.clientSlogan;
+            document.getElementById('client-logo-url').value = p.data.clientLogo;
+        }
+        if(p.mode === 'text') document.getElementById('text-val').value = p.data.text;
+
         switchTab(p.mode);
     }
 
@@ -310,6 +331,7 @@
         qrCode.download({ name: name, extension: format }); 
     }
 
+    // Initialize
     renderProjects();
     updateLive();
 </script>
