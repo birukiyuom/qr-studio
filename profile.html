@@ -3,54 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect</title>
+    <title>Profile Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f3f4f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
-        .avatar { width: 80px; height: 80px; background: #4f46e5; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; margin: 0 auto 20px; overflow: hidden; }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        h1 { font-size: 1.5rem; margin-bottom: 10px; color: #1e293b; }
-        .link-btn { display: block; padding: 15px; margin: 10px 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; text-decoration: none; color: #334155; font-weight: 600; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .profile-card { background: white; width: 90%; max-width: 400px; border-radius: 30px; padding: 40px 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center; }
+        
+        .avatar-circle { width: 100px; height: 100px; background: linear-gradient(135deg, #4f46e5, #9333ea); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold; overflow: hidden; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+        
+        h1 { margin: 0 0 5px 0; color: #1e293b; font-size: 1.6rem; }
+        p { color: #64748b; font-size: 0.9rem; margin-bottom: 30px; }
+        
+        .social-link { display: flex; align-items: center; justify-content: center; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; text-decoration: none; padding: 16px; border-radius: 16px; margin-bottom: 12px; font-weight: 600; transition: 0.2s; }
+        .social-link:hover { background: #4f46e5; color: white; transform: translateY(-2px); }
+        .social-link i { font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div id="avatar-box" class="avatar">?</div>
-    <h1 id="display-name">Loading...</h1>
-    <div id="links-container"></div>
+<div class="profile-card">
+    <div id="avatar" class="avatar-circle">?</div>
+    <h1 id="client-name-display">Loading Identity...</h1>
+    <p>Scan successful! Connect via the links below:</p>
+    <div id="links-box"></div>
 </div>
 
 <script>
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
-        const name = params.get('name') || "Welcome";
+        const name = params.get('name') || "User";
         const logo = params.get('logo');
         const data = params.get('data');
 
-        // 1. Set the Name
-        document.getElementById('display-name').innerText = name;
+        // 1. Set Name
+        document.getElementById('client-name-display').innerText = name;
 
-        // 2. Set Avatar (Image or First Letter)
-        const avatarBox = document.getElementById('avatar-box');
-        if (logo && logo.startsWith('http')) {
-            avatarBox.innerHTML = `<img src="${logo}">`;
+        // 2. Set Avatar Logic
+        const avatarDiv = document.getElementById('avatar');
+        if (logo && logo.includes('http')) {
+            avatarDiv.innerHTML = `<img src="${logo}" alt="logo">`;
         } else {
-            avatarBox.innerText = name.charAt(0).toUpperCase();
+            avatarDiv.innerText = name.charAt(0).toUpperCase();
         }
 
-        // 3. Generate Links
+        // 3. Render Links
         if (data) {
-            const container = document.getElementById('links-container');
-            const parts = data.split('|');
-            parts.forEach(p => {
-                const [type, val] = p.split(':');
-                if (val && val !== 'undefined') {
-                    const btn = document.createElement('a');
-                    btn.className = 'link-btn';
-                    btn.innerText = type === 'TG' ? 'Telegram' : type === 'IG' ? 'Instagram' : 'WhatsApp';
-                    btn.href = type === 'TG' ? `https://t.me/${val}` : type === 'IG' ? `https://instagram.com/${val}` : `https://wa.me/${val}`;
-                    container.appendChild(btn);
+            const container = document.getElementById('links-box');
+            const items = data.split(',');
+            
+            const icons = { 'TG': 'fa-telegram', 'IG': 'fa-instagram', 'FB': 'fa-facebook', 'WA': 'fa-whatsapp' };
+            const names = { 'TG': 'Telegram', 'IG': 'Instagram', 'FB': 'Facebook', 'WA': 'WhatsApp' };
+            const urls = { 
+                'TG': v => `https://t.me/${v.replace('@','')}`, 
+                'IG': v => `https://instagram.com/${v.replace('@','')}`, 
+                'FB': v => v.includes('http') ? v : `https://facebook.com/${v}`,
+                'WA': v => `https://wa.me/${v}`
+            };
+
+            items.forEach(item => {
+                const [key, val] = item.split(':');
+                if (val && val !== 'undefined' && val.trim() !== "") {
+                    const a = document.createElement('a');
+                    a.className = 'social-link';
+                    a.href = urls[key](val);
+                    a.target = "_blank";
+                    a.innerHTML = `<i class="fa-brands ${icons[key]}"></i> ${names[key]}`;
+                    container.appendChild(a);
                 }
             });
         }
