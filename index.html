@@ -45,7 +45,6 @@
             overflow: hidden;
         }
 
-        /* Sidebar Styles */
         .sidebar { height: 90vh; display: flex; flex-direction: column; padding: 20px; }
         #project-list { overflow-y: auto; flex-grow: 1; margin-top: 15px; }
         
@@ -67,7 +66,6 @@
         }
         .del-btn { color: #ef4444; border: none; background: none; cursor: pointer; }
 
-        /* Tabs & Content */
         .editor { display: flex; flex-direction: column; height: 90vh; }
         .tabs { display: flex; background: rgba(0, 0, 0, 0.2); padding: 8px; gap: 8px; }
         .tab { 
@@ -79,11 +77,10 @@
         
         .content { padding: 30px; flex-grow: 1; overflow-y: auto; }
         .scroll-box { 
-            max-height: 280px; overflow-y: auto; padding: 15px; 
+            max-height: 300px; overflow-y: auto; padding: 15px; 
             background: rgba(0,0,0,0.2); border-radius: 12px;
         }
 
-        /* Form Elements */
         label { display: block; font-size: 0.65rem; font-weight: 800; margin-bottom: 8px; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; }
         input, select { 
             width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
@@ -92,7 +89,6 @@
         }
         input:focus { border-color: var(--primary); outline: none; }
 
-        /* Preview Area */
         .preview-pane { padding: 40px; text-align: center; height: 90vh; display: flex; flex-direction: column; justify-content: center; }
         #canvas { margin: 25px 0; background: white; padding: 20px; border-radius: 20px; display: inline-block; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
 
@@ -125,20 +121,21 @@
             </div>
 
             <div id="tab-social" class="hidden">
-                <label>Branding</label>
+                <label>Landing Page Branding</label>
                 <div class="grid-2">
-                    <input type="text" id="client-name" placeholder="Name" oninput="updateLive()">
-                    <input type="text" id="client-slogan" placeholder="Tagline" oninput="updateLive()">
+                    <input type="text" id="client-name" placeholder="Display Name" oninput="updateLive()">
+                    <input type="text" id="client-slogan" placeholder="Tagline/Slogan" oninput="updateLive()">
                 </div>
-                <label>Logo URL</label>
-                <input type="text" id="client-logo-url" placeholder="Direct Image Link" oninput="updateLive()">
+                <label>Logo URL (Direct Image Link)</label>
+                <input type="text" id="client-logo-url" placeholder="https://site.com/logo.png" oninput="updateLive()">
 
-                <label>Connections</label>
+                <label>Social Connections</label>
                 <div class="scroll-box">
-                    <input type="text" id="s-ig" placeholder="Instagram @username" oninput="updateLive()">
-                    <input type="text" id="s-tt" placeholder="TikTok @username" oninput="updateLive()">
+                    <input type="text" id="s-ig" placeholder="Instagram Link" oninput="updateLive()">
+                    <input type="text" id="s-fb" placeholder="Facebook Link" oninput="updateLive()">
+                    <input type="text" id="s-tt" placeholder="TikTok Link" oninput="updateLive()">
                     <input type="text" id="s-yt" placeholder="YouTube Link" oninput="updateLive()">
-                    <input type="text" id="s-tg" placeholder="Telegram t.me/user" oninput="updateLive()">
+                    <input type="text" id="s-tg" placeholder="Telegram Link" oninput="updateLive()">
                     <input type="text" id="s-wa" placeholder="WhatsApp Number" oninput="updateLive()">
                 </div>
             </div>
@@ -148,10 +145,10 @@
                 <input type="text" id="text-val" placeholder="Write something..." oninput="updateLive()">
             </div>
 
-            <label>Brand Presets</label>
+            <label>Quick Brand Presets</label>
             <div class="grid-2" style="margin-bottom: 20px;">
-                <button onclick="applyPreset('biruk')" style="background:#4f46e5; border:none; color:white; padding:10px; border-radius:8px; cursor:pointer;">BIRUK DESIGN</button>
-                <button onclick="applyPreset('burka')" style="background:#78350f; border:none; color:white; padding:10px; border-radius:8px; cursor:pointer;">BURKA COFFEE</button>
+                <button onclick="applyPreset('biruk')" style="background:#4f46e5; border:none; color:white; padding:10px; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-user"></i> BIRUK DESIGN</button>
+                <button onclick="applyPreset('burka')" style="background:#78350f; border:none; color:white; padding:10px; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-coffee"></i> BURKA COFFEE</button>
             </div>
 
             <div style="background: rgba(255,255,255,0.03); padding:20px; border-radius:18px;">
@@ -186,15 +183,13 @@
         <button class="btn-save" onclick="saveProject()"><i class="fa-solid fa-floppy-disk"></i> Save to Studio</button>
         <div class="grid-2">
             <button class="btn-dl" onclick="download('png')">PNG</button>
-            <button class="btn-dl" onclick="download('svg')" style="background:#4f46e5">SVG</button>
+            <button class="btn-dl" onclick="download('svg')" style="background:#4f46e5">SVG (Vector)</button>
         </div>
     </div>
 </div>
 
 <script>
     let currentMode = 'url';
-    let currentLogoBase64 = null;
-    let currentBgBase64 = null;
 
     const qrCode = new QRCodeStyling({
         width: 300, height: 300, type: "svg",
@@ -221,7 +216,7 @@
             document.getElementById('qr-dots').value = "square";
             document.getElementById('proj-name').value = "Biruk Design Portfolio";
         } else if (brand === 'burka') {
-            document.getElementById('qr-color').value = "#3e2723";
+            document.getElementById('qr-color').value = "#78350f";
             document.getElementById('qr-dots').value = "classy";
             document.getElementById('proj-name').value = "Burka Coffee Branding";
         }
@@ -233,11 +228,22 @@
         if (currentMode === 'url') {
             val = document.getElementById('url-val').value || "https://google.com";
         } else if (currentMode === 'social') {
+            const socialData = [
+                { n: 'Instagram', v: document.getElementById('s-ig').value },
+                { n: 'Facebook', v: document.getElementById('s-fb').value },
+                { n: 'TikTok', v: document.getElementById('s-tt').value },
+                { n: 'YouTube', v: document.getElementById('s-yt').value },
+                { n: 'Telegram', v: document.getElementById('s-tg').value },
+                { n: 'WhatsApp', v: document.getElementById('s-wa').value }
+            ].filter(link => link.v);
+
+            const dataString = socialData.map(l => `${l.n}: ${l.v}`).join(' | ');
             const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
             const name = document.getElementById('client-name').value || "Enterprise Hub";
             const slogan = document.getElementById('client-slogan').value || "Innovative Solutions";
             const logoURL = document.getElementById('client-logo-url').value || "";
-            val = `${profilePage}?name=${encodeURIComponent(name)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}`;
+
+            val = `${profilePage}?name=${encodeURIComponent(name)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}&data=${encodeURIComponent(dataString)}`;
         } else {
             val = document.getElementById('text-val').value || " ";
         }
