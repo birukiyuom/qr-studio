@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Identity Hub | Enterprise Edition</title>
+    <title>Identity Hub | Biruk Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #6366f1;
-            --bg-dark: #0f172a;
             --glass: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
             background-attachment: fixed;
-            color: var(--text-main);
+            color: white;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -29,76 +27,62 @@
 
         .hub-card {
             background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            border-radius: 32px;
+            border-radius: 35px;
             width: 100%;
-            max-width: 400px;
-            padding: 40px 30px;
+            max-width: 420px;
+            padding: 45px 25px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
         }
 
         .logo-container {
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 20px;
-            border-radius: 28px;
-            border: 2px solid var(--primary);
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 25px;
+            border-radius: 30px;
+            border: 3px solid var(--primary);
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
         }
 
-        .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .logo-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        h1 { margin: 10px 0 5px; font-size: 1.6rem; letter-spacing: -0.5px; }
-        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.4; }
+        h1 { margin: 15px 0 5px; font-size: 1.8rem; font-weight: 800; }
+        p { color: #94a3b8; margin-bottom: 35px; font-size: 0.95rem; }
 
-        .links-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .links-container { display: flex; flex-direction: column; gap: 15px; }
 
         .action-button {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
             color: white;
             padding: 18px;
-            border-radius: 18px;
+            border-radius: 20px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 15px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .action-button:hover {
             background: var(--primary);
-            border-color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 24px rgba(99, 102, 241, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
         }
 
         .footer {
-            margin-top: 40px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            margin-top: 50px;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
             color: #475569;
-            font-weight: 700;
+            font-weight: 900;
         }
     </style>
 </head>
@@ -108,62 +92,53 @@
     <div class="logo-container">
         <img id="display-logo" src="" alt="Logo" onerror="this.src='https://via.placeholder.com/150?text=No+Logo'">
     </div>
-    <h1 id="display-name">Loading...</h1>
+    <h1 id="display-name">Business Hub</h1>
     <p id="display-slogan"></p>
 
-    <div class="links-container" id="links-box">
-        </div>
+    <div class="links-container" id="links-box"></div>
 
-    <div class="footer">
-        POWERED BY BIRUK DESIGN
-    </div>
+    <div class="footer">POWERED BY BIRUK DESIGN</div>
 </div>
 
 <script>
     const params = new URLSearchParams(window.location.search);
+    document.getElementById('display-name').innerText = params.get('name') || "Business Identity";
+    document.getElementById('display-slogan').innerText = params.get('slogan') || "Digital Solutions";
     
-    // Set Header Info
-    document.getElementById('display-name').innerText = params.get('name') || "Business Hub";
-    document.getElementById('display-slogan').innerText = params.get('slogan') || "Professional Solutions";
-    
-    const logoSrc = params.get('logo');
-    if(logoSrc) {
-        document.getElementById('display-logo').src = logoSrc;
+    if(params.get('logo')) {
+        document.getElementById('display-logo').src = params.get('logo');
     }
 
-    // Generate Buttons
-    const data = params.get('data') || "";
-    const linksBox = document.getElementById('links-box');
+    const rawData = params.get('data') || "";
+    const box = document.getElementById('links-box');
 
-    if (data) {
-        const links = data.split(' | ');
-        links.forEach(link => {
-            const parts = link.split(': ');
+    if (rawData) {
+        rawData.split(' | ').forEach(item => {
+            const parts = item.split(': ');
             if (parts.length < 2) return;
             
-            const platform = parts[0];
-            const value = parts.slice(1).join(': '); // Handles URLs containing colons
+            const name = parts[0];
+            const url = parts.slice(1).join(': ');
             
             const btn = document.createElement('a');
             btn.className = 'action-button';
-            btn.href = value.trim();
-            btn.target = "_blank"; // Open in new tab
-            
-            let icon = '<i class="fa-solid fa-link"></i>';
-            const pLower = platform.toLowerCase();
-            
-            if(pLower.includes('instagram')) icon = '<i class="fa-brands fa-instagram"></i>';
-            if(pLower.includes('facebook')) icon = '<i class="fa-brands fa-facebook"></i>';
-            if(pLower.includes('telegram')) icon = '<i class="fa-brands fa-telegram"></i>';
-            if(pLower.includes('whatsapp')) icon = '<i class="fa-brands fa-whatsapp"></i>';
-            if(pLower.includes('tiktok')) icon = '<i class="fa-brands fa-tiktok"></i>';
-            if(pLower.includes('youtube')) icon = '<i class="fa-brands fa-youtube"></i>';
+            btn.href = url.startsWith('http') ? url : 'https://' + url;
+            btn.target = "_blank";
 
-            btn.innerHTML = `${icon} ${platform}`;
-            linksBox.appendChild(btn);
+            let icon = '<i class="fa-solid fa-link"></i>';
+            const n = name.toLowerCase();
+            if(n.includes('instagram')) icon = '<i class="fa-brands fa-instagram"></i>';
+            if(n.includes('facebook')) icon = '<i class="fa-brands fa-facebook"></i>';
+            if(n.includes('telegram')) icon = '<i class="fa-brands fa-telegram"></i>';
+            if(n.includes('whatsapp')) icon = '<i class="fa-brands fa-whatsapp"></i>';
+            if(n.includes('youtube')) icon = '<i class="fa-brands fa-youtube"></i>';
+            if(n.includes('tiktok')) icon = '<i class="fa-brands fa-tiktok"></i>';
+            if(n.includes('menu')) icon = '<i class="fa-solid fa-utensils"></i>';
+
+            btn.innerHTML = `${icon} ${name}`;
+            box.appendChild(btn);
         });
     }
 </script>
-
 </body>
 </html>
