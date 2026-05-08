@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Identity Hub</title>
+    <title>Identity Hub | Enterprise Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4f46e5;
-            --bg: #0f172a; 
-            --card: #1e293b;
-            --text: #f8fafc;
+            --primary: #6366f1;
+            --bg-dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            background-attachment: fixed;
+            color: var(--text-main);
             margin: 0;
             display: flex;
             justify-content: center;
@@ -25,150 +27,127 @@
             padding: 20px;
         }
 
-        .profile-card {
+        .hub-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
             width: 100%;
             max-width: 400px;
-            background: var(--card);
-            border-radius: 24px;
-            padding: 40px 24px;
+            padding: 40px 30px;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
 
         .logo-container {
             width: 100px;
             height: 100px;
             margin: 0 auto 20px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
+            border-radius: 25px;
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            border: 2px solid var(--primary);
         }
 
         .logo-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Changed to cover for a better look */
+            object-fit: cover;
         }
 
-        h1 { font-size: 1.5rem; margin: 0 0 5px 0; font-weight: 700; }
-        .slogan { color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; display: block; font-style: italic; }
+        h1 { margin: 10px 0 5px; font-size: 1.5rem; letter-spacing: -0.5px; }
+        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; }
 
-        .links-container { display: grid; gap: 12px; }
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-        .btn-link {
+        .action-button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: rgba(255,255,255,0.03);
-            text-decoration: none;
-            color: white;
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-weight: 500;
-            transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
+            justify-content: center;
+            gap: 12px;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn-link:hover {
+        .action-button:hover {
             background: var(--primary);
+            border-color: var(--primary);
             transform: translateY(-3px);
-            border-color: transparent;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
 
-        .btn-link i { font-size: 1.2rem; width: 25px; text-align: center; }
-
-        .footer { margin-top: 30px; font-size: 0.7rem; color: #475569; letter-spacing: 2px; text-transform: uppercase; }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #475569;
+        }
     </style>
 </head>
 <body>
 
-<div class="profile-card">
-    <div class="logo-container" id="logo-box">
-        <i class="fa-solid fa-briefcase" style="font-size: 40px; color: var(--primary);"></i>
+<div class="hub-card">
+    <div class="logo-container">
+        <img id="display-logo" src="" alt="Logo">
     </div>
-    
-    <h1 id="p-name">Enterprise Hub</h1>
-    <span class="slogan" id="p-slogan">Innovative Solutions</span>
+    <h1 id="display-name">Loading...</h1>
+    <p id="display-slogan"></p>
 
-    <div class="links-container" id="p-links">
+    <div class="links-container" id="links-box">
         </div>
 
-    <div class="footer">Powered by Biruk Design</div>
+    <div class="footer">
+        Powered by Biruk Design
+    </div>
 </div>
 
 <script>
-    window.onload = function() {
-        const params = new URLSearchParams(window.location.search);
-        
-        // 1. Get Data from URL
-        const customName = params.get('name');
-        const customLogo = params.get('logo');
-        const customSlogan = params.get('slogan');
-        const dataStr = params.get('data');
+    // Logic to parse URL parameters and display data
+    const params = new URLSearchParams(window.location.search);
+    
+    document.getElementById('display-name').innerText = params.get('name') || "Enterprise Hub";
+    document.getElementById('display-slogan').innerText = params.get('slogan') || "Innovative Solutions";
+    document.getElementById('display-logo').src = params.get('logo') || "https://via.placeholder.com/100";
 
-        // 2. Apply Custom Name
-        if (customName) {
-            document.getElementById('p-name').innerText = decodeURIComponent(customName);
-            document.title = decodeURIComponent(customName); // Updates browser tab title
-        }
+    const data = params.get('data') || "";
+    const linksBox = document.getElementById('links-box');
 
-        // 3. Apply Custom Logo
-        if (customLogo && customLogo !== "null" && customLogo !== "") {
-            document.getElementById('logo-box').innerHTML = `<img src="${decodeURIComponent(customLogo)}" alt="Logo">`;
-        }
-
-        // 4. Apply Slogan
-        if (customSlogan) {
-            document.getElementById('p-slogan').innerText = decodeURIComponent(customSlogan);
-        }
-
-        // 5. Build Links
-        if (dataStr) {
-            const container = document.getElementById('p-links');
-            const sections = decodeURIComponent(dataStr).split(' | ');
+    if (data) {
+        const links = data.split(' | ');
+        links.forEach(link => {
+            const [platform, value] = link.split(': ');
+            const btn = document.createElement('a');
+            btn.className = 'action-button';
+            btn.href = value.includes('http') ? value : '#';
             
-            const icons = {
-                'Instagram': 'fa-instagram', 
-                'TikTok': 'fa-tiktok', 
-                'YouTube': 'fa-youtube',
-                'Telegram': 'fa-telegram', 
-                'WhatsApp': 'fa-whatsapp', 
-                'Facebook': 'fa-facebook',
-                'LinkedIn': 'fa-linkedin', 
-                'X': 'fa-x-twitter', 
-                'Portfolio': 'fa-globe'
-            };
+            // Icon mapping
+            let icon = '<i class="fa-solid fa-link"></i>';
+            if(platform.toLowerCase().includes('instagram')) icon = '<i class="fa-brands fa-instagram"></i>';
+            if(platform.toLowerCase().includes('telegram')) icon = '<i class="fa-brands fa-telegram"></i>';
+            if(platform.toLowerCase().includes('whatsapp')) icon = '<i class="fa-brands fa-whatsapp"></i>';
+            if(platform.toLowerCase().includes('menu')) icon = '<i class="fa-solid fa-utensils"></i>';
 
-            sections.forEach(item => {
-                const [name, val] = item.split(': ');
-                if (!val) return;
-
-                const a = document.createElement('a');
-                a.className = 'btn-link';
-                
-                // Logic for WhatsApp numbers vs links
-                if (name === 'WhatsApp' && !val.includes('http')) {
-                    a.href = `https://wa.me/${val.replace(/\s+/g, '')}`;
-                } else {
-                    a.href = val.includes('http') ? val : `https://${val}`;
-                }
-                
-                a.target = "_blank";
-                
-                const iconClass = icons[name] ? `fa-brands ${icons[name]}` : 'fa-solid fa-link';
-                a.innerHTML = `<i class="${iconClass}"></i> ${name}`;
-                container.appendChild(a);
-            });
-        } else {
-            // Fallback message if no links are provided
-            document.getElementById('p-links').innerHTML = `<p style="font-size:0.8rem; color:#64748b;">No contact links provided.</p>`;
-        }
+            btn.innerHTML = `${icon} ${platform}`;
+            linksBox.appendChild(btn);
+        });
     }
 </script>
+
 </body>
 </html>
