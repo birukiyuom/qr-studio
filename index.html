@@ -7,53 +7,111 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <style>
-        :root { --primary: #4f46e5; --bg: #f3f4f6; --text: #1e293b; --success: #10b981; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .dashboard { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 260px 1.2fr 1fr; gap: 20px; }
+        :root { 
+            --primary: #6366f1; 
+            --bg-dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh;
+        }
+
+        .dashboard { 
+            max-width: 1500px; 
+            margin: 0 auto; 
+            display: grid; 
+            grid-template-columns: 280px 1.2fr 1fr; 
+            gap: 25px; 
+        }
+
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar { height: 90vh; display: flex; flex-direction: column; padding: 20px; }
+        #project-list { overflow-y: auto; flex-grow: 1; margin-top: 15px; }
         
-        /* Sidebar: Projects */
-        .sidebar { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; height: 90vh; overflow-y: auto; }
-        .project-card { padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; cursor: pointer; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .project-card:hover { border-color: var(--primary); background: #eff6ff; }
-        .del-btn { color: #ef4444; border: none; background: none; cursor: pointer; padding: 5px; }
+        .project-card { 
+            padding: 15px; 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 14px; 
+            margin-bottom: 12px; 
+            cursor: pointer; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s; 
+        }
+        .project-card:hover { 
+            background: rgba(99, 102, 241, 0.15); 
+            border-color: var(--primary);
+        }
+        .del-btn { color: #ef4444; border: none; background: none; cursor: pointer; }
 
-        /* Main Editor */
-        .editor { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; height: 90vh; }
-        .tabs { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
-        .tab { flex: 1; padding: 18px; text-align: center; cursor: pointer; font-weight: 700; font-size: 0.75rem; color: #64748b; border-bottom: 3px solid transparent; transition: 0.2s; }
-        .tab.active { background: #fff; color: var(--primary); border-bottom-color: var(--primary); }
+        /* Tabs & Content */
+        .editor { display: flex; flex-direction: column; height: 90vh; }
+        .tabs { display: flex; background: rgba(0, 0, 0, 0.2); padding: 8px; gap: 8px; }
+        .tab { 
+            flex: 1; padding: 14px; text-align: center; cursor: pointer; 
+            font-weight: 700; font-size: 0.7rem; color: var(--text-dim); 
+            border-radius: 12px; transition: 0.3s;
+        }
+        .tab.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
         
-        .content { padding: 25px; flex-grow: 1; overflow-y: auto; }
-        .scroll-box { max-height: 300px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px; border: 1px solid #f1f5f9; border-radius: 8px; padding: 10px; }
+        .content { padding: 30px; flex-grow: 1; overflow-y: auto; }
+        .scroll-box { 
+            max-height: 280px; overflow-y: auto; padding: 15px; 
+            background: rgba(0,0,0,0.2); border-radius: 12px;
+        }
 
-        /* Inputs */
-        label { display: block; font-size: 0.65rem; font-weight: 800; margin-bottom: 6px; color: #64748b; text-transform: uppercase; margin-top: 10px; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; box-sizing: border-box; }
-        input:focus { outline: none; border-color: var(--primary); ring: 2px var(--primary); }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        /* Presets */
-        .preset-btn { border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.65rem; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-        .preset-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        /* Form Elements */
+        label { display: block; font-size: 0.65rem; font-weight: 800; margin-bottom: 8px; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; }
+        input, select { 
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border); border-radius: 10px; 
+            margin-bottom: 15px; font-size: 0.9rem; color: white; box-sizing: border-box;
+        }
+        input:focus { border-color: var(--primary); outline: none; }
 
         /* Preview Area */
-        .preview-pane { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 30px; text-align: center; position: sticky; top: 20px; height: fit-content; }
-        #canvas { margin: 20px 0; background: #f8fafc; padding: 15px; border-radius: 12px; display: inline-block; }
-        .btn-save { background: var(--success); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
-        .btn-dl { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; }
-        .btn-svg { background: #6366f1; }
+        .preview-pane { padding: 40px; text-align: center; height: 90vh; display: flex; flex-direction: column; justify-content: center; }
+        #canvas { margin: 25px 0; background: white; padding: 20px; border-radius: 20px; display: inline-block; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+
+        .btn-save { background: var(--success); color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-weight: 700; cursor: pointer; margin-bottom: 15px; transition: 0.3s; }
+        .btn-dl { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        
         .hidden { display: none; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <div class="sidebar">
-        <h3 style="margin-top:0; font-size: 1rem;"><i class="fa-solid fa-folder-open"></i> My Designs</h3>
+    <div class="glass-panel sidebar">
+        <h3 style="margin:0;"><i class="fa-solid fa-folder-open"></i> My Designs</h3>
         <div id="project-list"></div>
     </div>
 
-    <div class="editor">
+    <div class="glass-panel editor">
         <div class="tabs">
             <div class="tab active" id="tab-btn-url" onclick="switchTab('url')">WEBSITE</div>
             <div class="tab" id="tab-btn-social" onclick="switchTab('social')">SOCIAL HUB</div>
@@ -67,95 +125,69 @@
             </div>
 
             <div id="tab-social" class="hidden">
-                <label style="color:var(--primary)">Landing Page Branding</label>
+                <label>Branding</label>
                 <div class="grid-2">
-                    <div>
-                        <label>Display Name</label>
-                        <input type="text" id="client-name" placeholder="E.g. Burka Coffee" oninput="updateLive()">
-                    </div>
-                    <div>
-                        <label>Tagline/Slogan</label>
-                        <input type="text" id="client-slogan" placeholder="E.g. Quality Design" oninput="updateLive()">
-                    </div>
+                    <input type="text" id="client-name" placeholder="Name" oninput="updateLive()">
+                    <input type="text" id="client-slogan" placeholder="Tagline" oninput="updateLive()">
                 </div>
-                <label>Logo URL (Direct Image Link)</label>
-                <input type="text" id="client-logo-url" placeholder="https://site.com/logo.png" oninput="updateLive()">
+                <label>Logo URL</label>
+                <input type="text" id="client-logo-url" placeholder="Direct Image Link" oninput="updateLive()">
 
-                <label style="color:var(--primary)">Social Connections</label>
+                <label>Connections</label>
                 <div class="scroll-box">
-                    <label>Instagram</label><input type="text" id="s-ig" placeholder="@username" oninput="updateLive()">
-                    <label>TikTok</label><input type="text" id="s-tt" placeholder="@username" oninput="updateLive()">
-                    <label>YouTube</label><input type="text" id="s-yt" placeholder="Channel Link" oninput="updateLive()">
-                    <label>Telegram</label><input type="text" id="s-tg" placeholder="t.me/user" oninput="updateLive()">
-                    <label>WhatsApp</label><input type="text" id="s-wa" placeholder="Phone Number" oninput="updateLive()">
-                    <label>Facebook</label><input type="text" id="s-fb" placeholder="Link" oninput="updateLive()">
-                    <label>LinkedIn</label><input type="text" id="s-li" placeholder="Link" oninput="updateLive()">
-                    <label>X (Twitter)</label><input type="text" id="s-x" placeholder="Link" oninput="updateLive()">
-                    <label>Portfolio</label><input type="text" id="s-port" placeholder="yourwebsite.com" oninput="updateLive()">
+                    <input type="text" id="s-ig" placeholder="Instagram @username" oninput="updateLive()">
+                    <input type="text" id="s-tt" placeholder="TikTok @username" oninput="updateLive()">
+                    <input type="text" id="s-yt" placeholder="YouTube Link" oninput="updateLive()">
+                    <input type="text" id="s-tg" placeholder="Telegram t.me/user" oninput="updateLive()">
+                    <input type="text" id="s-wa" placeholder="WhatsApp Number" oninput="updateLive()">
                 </div>
             </div>
 
             <div id="tab-text" class="hidden">
-                <label>Plain Text Content</label>
+                <label>Text Content</label>
                 <input type="text" id="text-val" placeholder="Write something..." oninput="updateLive()">
             </div>
 
-            <label style="color:var(--primary)">Quick Brand Presets</label>
+            <label>Brand Presets</label>
             <div class="grid-2" style="margin-bottom: 20px;">
-                <button type="button" class="preset-btn" onclick="applyPreset('biruk')" style="background: #4f46e5;">
-                    <i class="fa-solid fa-user-tie"></i> BIRUK DESIGN
-                </button>
-                <button type="button" class="preset-btn" onclick="applyPreset('burka')" style="background: #78350f;">
-                    <i class="fa-solid fa-mug-hot"></i> BURKA COFFEE
-                </button>
+                <button onclick="applyPreset('biruk')" style="background:#4f46e5; border:none; color:white; padding:10px; border-radius:8px; cursor:pointer;">BIRUK DESIGN</button>
+                <button onclick="applyPreset('burka')" style="background:#78350f; border:none; color:white; padding:10px; border-radius:8px; cursor:pointer;">BURKA COFFEE</button>
             </div>
 
-            <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;">
-                <label style="color:var(--primary); margin:0 0 15px 0">Design Customization</label>
+            <div style="background: rgba(255,255,255,0.03); padding:20px; border-radius:18px;">
+                <label>QR Customization</label>
                 <div class="grid-2">
-                    <div><label>QR Color</label><input type="color" id="qr-color" value="#4f46e5" oninput="updateLive()"></div>
+                    <div><label>Color</label><input type="color" id="qr-color" value="#6366f1" oninput="updateLive()"></div>
                     <div><label>Background</label><input type="color" id="qr-bg" value="#ffffff" oninput="updateLive()"></div>
-                    <div>
-                        <label>Dot Style</label>
+                    <div><label>Dots</label>
                         <select id="qr-dots" onchange="updateLive()">
                             <option value="square">Square</option>
-                            <option value="classy">Classy</option>
-                            <option value="rounded">Rounded</option>
+                            <option value="classy">Premium</option>
                             <option value="extra-rounded">Dots</option>
                         </select>
                     </div>
-                    <div>
-                        <label>Eye Shape</label>
+                    <div><label>Eyes</label>
                         <select id="qr-eyes" onchange="updateLive()">
                             <option value="extra-rounded">Rounded</option>
                             <option value="square">Square</option>
                         </select>
                     </div>
                 </div>
-
-                <label style="margin-top:15px">Internal QR Assets (Optional)</label>
-                <div class="grid-2">
-                    <div><label>Center Logo</label><input type="file" id="qr-logo-file" accept="image/*" onchange="handleFile(event, 'logo')"></div>
-                    <div><label>Background</label><input type="file" id="qr-bg-file" accept="image/*" onchange="handleFile(event, 'bg')"></div>
-                </div>
             </div>
 
-            <div style="margin-top:20px">
-                <label>Project Name</label>
-                <input type="text" id="proj-name" placeholder="E.g. Business Card QR">
-            </div>
+            <label style="margin-top:20px">Project Name</label>
+            <input type="text" id="proj-name" placeholder="E.g. Business QR">
         </div>
     </div>
 
-    <div class="preview-pane">
+    <div class="glass-panel preview-pane">
         <label>Professional Preview</label>
         <div id="canvas"></div>
         <button class="btn-save" onclick="saveProject()"><i class="fa-solid fa-floppy-disk"></i> Save to Studio</button>
         <div class="grid-2">
             <button class="btn-dl" onclick="download('png')">PNG</button>
-            <button class="btn-dl btn-svg" onclick="download('svg')">SVG (Vector)</button>
+            <button class="btn-dl" onclick="download('svg')" style="background:#4f46e5">SVG</button>
         </div>
-        <p style="font-size: 0.6rem; color: #94a3b8; margin-top: 15px;">SVG is recommended for professional printing.</p>
     </div>
 </div>
 
@@ -165,59 +197,35 @@
     let currentBgBase64 = null;
 
     const qrCode = new QRCodeStyling({
-        width: 300, 
-        height: 300,
-        type: "svg",
+        width: 300, height: 300, type: "svg",
         qrOptions: { errorCorrectionLevel: "H" },
-        dotsOptions: { color: "#4f46e5", type: "square" },
+        dotsOptions: { color: "#6366f1", type: "square" },
         cornersSquareOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" },
         imageOptions: { crossOrigin: "anonymous", margin: 5, imageSize: 0.4 }
     });
-    
     qrCode.append(document.getElementById("canvas"));
 
     function switchTab(mode) {
         currentMode = mode;
-        // Update Tabs UI
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-btn-${mode}`).classList.add('active');
-        
-        // Switch visibility
         ['url','social','text'].forEach(m => document.getElementById('tab-'+m).classList.add('hidden'));
         document.getElementById('tab-'+mode).classList.remove('hidden');
-        
         updateLive();
     }
 
     function applyPreset(brand) {
         if (brand === 'biruk') {
             document.getElementById('qr-color').value = "#4f46e5";
-            document.getElementById('qr-bg').value = "#ffffff";
             document.getElementById('qr-dots').value = "square";
-            document.getElementById('qr-eyes').value = "extra-rounded";
             document.getElementById('proj-name').value = "Biruk Design Portfolio";
-        } 
-        else if (brand === 'burka') {
+        } else if (brand === 'burka') {
             document.getElementById('qr-color').value = "#3e2723";
-            document.getElementById('qr-bg').value = "#fffcf2";
             document.getElementById('qr-dots').value = "classy";
-            document.getElementById('qr-eyes').value = "square";
             document.getElementById('proj-name').value = "Burka Coffee Branding";
         }
         updateLive();
-    }
-
-    async function handleFile(event, type) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            if (type === 'logo') currentLogoBase64 = e.target.result;
-            if (type === 'bg') currentBgBase64 = e.target.result;
-            updateLive();
-        };
-        reader.readAsDataURL(file);
     }
 
     function updateLive() {
@@ -225,27 +233,11 @@
         if (currentMode === 'url') {
             val = document.getElementById('url-val').value || "https://google.com";
         } else if (currentMode === 'social') {
-            const links = [
-                {n: 'Instagram', v: document.getElementById('s-ig').value},
-                {n: 'TikTok', v: document.getElementById('s-tt').value},
-                {n: 'YouTube', v: document.getElementById('s-yt').value},
-                {n: 'Telegram', v: document.getElementById('s-tg').value},
-                {n: 'WhatsApp', v: document.getElementById('s-wa').value},
-                {n: 'Facebook', v: document.getElementById('s-fb').value},
-                {n: 'LinkedIn', v: document.getElementById('s-li').value},
-                {n: 'X', v: document.getElementById('s-x').value},
-                {n: 'Portfolio', v: document.getElementById('s-port').value}
-            ].filter(link => link.v);
-
-            const dataString = links.map(l => `${l.n}: ${l.v}`).join(' | ');
-            // Make sure this URL points to wherever you host your profile.html
             const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
-            
             const name = document.getElementById('client-name').value || "Enterprise Hub";
             const slogan = document.getElementById('client-slogan').value || "Innovative Solutions";
             const logoURL = document.getElementById('client-logo-url').value || "";
-
-            val = `${profilePage}?name=${encodeURIComponent(name)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}&data=${encodeURIComponent(dataString)}`;
+            val = `${profilePage}?name=${encodeURIComponent(name)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}`;
         } else {
             val = document.getElementById('text-val').value || " ";
         }
@@ -253,12 +245,8 @@
         qrCode.update({
             data: val,
             dotsOptions: { color: document.getElementById('qr-color').value, type: document.getElementById('qr-dots').value },
-            backgroundOptions: { 
-                color: document.getElementById('qr-bg').value,
-                source: currentBgBase64 
-            },
-            cornersSquareOptions: { type: document.getElementById('qr-eyes').value, color: document.getElementById('qr-color').value },
-            image: currentLogoBase64
+            backgroundOptions: { color: document.getElementById('qr-bg').value },
+            cornersSquareOptions: { type: document.getElementById('qr-eyes').value, color: document.getElementById('qr-color').value }
         });
     }
 
@@ -266,19 +254,7 @@
         const project = {
             name: document.getElementById('proj-name').value || "Untitled",
             mode: currentMode,
-            data: {
-                url: document.getElementById('url-val').value,
-                clientName: document.getElementById('client-name').value,
-                clientSlogan: document.getElementById('client-slogan').value,
-                clientLogo: document.getElementById('client-logo-url').value,
-                text: document.getElementById('text-val').value
-            },
-            design: {
-                color: document.getElementById('qr-color').value,
-                bgColor: document.getElementById('qr-bg').value,
-                dots: document.getElementById('qr-dots').value,
-                eye: document.getElementById('qr-eyes').value
-            }
+            design: { color: document.getElementById('qr-color').value, dots: document.getElementById('qr-dots').value }
         };
         let projects = JSON.parse(localStorage.getItem('enterprise_qrs') || "[]");
         projects.unshift(project);
@@ -289,33 +265,11 @@
 
     function renderProjects() {
         const projects = JSON.parse(localStorage.getItem('enterprise_qrs') || "[]");
-        const list = document.getElementById('project-list');
-        list.innerHTML = projects.map((p, i) => `
-            <div class="project-card" onclick="loadProject(${i})">
+        document.getElementById('project-list').innerHTML = projects.map((p, i) => `
+            <div class="project-card">
                 <div><strong>${p.name}</strong><br><small>${p.mode.toUpperCase()}</small></div>
                 <button class="del-btn" onclick="deleteProj(${i}, event)"><i class="fa-solid fa-trash"></i></button>
-            </div>
-        `).join('');
-    }
-
-    function loadProject(i) {
-        const p = JSON.parse(localStorage.getItem('enterprise_qrs'))[i];
-        document.getElementById('proj-name').value = p.name;
-        document.getElementById('qr-color').value = p.design.color;
-        document.getElementById('qr-bg').value = p.design.bgColor;
-        document.getElementById('qr-dots').value = p.design.dots;
-        document.getElementById('qr-eyes').value = p.design.eye;
-        
-        // Restore specific tab data
-        if(p.mode === 'url') document.getElementById('url-val').value = p.data.url;
-        if(p.mode === 'social') {
-            document.getElementById('client-name').value = p.data.clientName;
-            document.getElementById('client-slogan').value = p.data.clientSlogan;
-            document.getElementById('client-logo-url').value = p.data.clientLogo;
-        }
-        if(p.mode === 'text') document.getElementById('text-val').value = p.data.text;
-
-        switchTab(p.mode);
+            </div>`).join('');
     }
 
     function deleteProj(i, e) {
@@ -326,12 +280,10 @@
         renderProjects();
     }
 
-    function download(format) { 
-        const name = document.getElementById('proj-name').value || "pro-qr";
-        qrCode.download({ name: name, extension: format }); 
+    function download(format) {
+        qrCode.download({ name: document.getElementById('proj-name').value || "qr", extension: format });
     }
 
-    // Initialize
     renderProjects();
     updateLive();
 </script>
