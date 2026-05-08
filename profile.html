@@ -41,16 +41,17 @@
         }
 
         .logo-container {
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             margin: 0 auto 20px;
-            border-radius: 25px;
+            border-radius: 28px;
             border: 2px solid var(--primary);
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
         }
 
         .logo-container img {
@@ -59,24 +60,24 @@
             object-fit: cover;
         }
 
-        h1 { margin: 10px 0 5px; font-size: 1.5rem; letter-spacing: -0.5px; }
-        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; }
+        h1 { margin: 10px 0 5px; font-size: 1.6rem; letter-spacing: -0.5px; }
+        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.4; }
 
         .links-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .action-button {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
             color: white;
-            padding: 16px;
-            border-radius: 16px;
+            padding: 18px;
+            border-radius: 18px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -88,15 +89,16 @@
             background: var(--primary);
             border-color: var(--primary);
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 12px 24px rgba(99, 102, 241, 0.3);
         }
 
         .footer {
             margin-top: 40px;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #475569;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -104,7 +106,7 @@
 
 <div class="hub-card">
     <div class="logo-container">
-        <img id="display-logo" src="" alt="Logo">
+        <img id="display-logo" src="" alt="Logo" onerror="this.src='https://via.placeholder.com/150?text=No+Logo'">
     </div>
     <h1 id="display-name">Loading...</h1>
     <p id="display-slogan"></p>
@@ -113,35 +115,49 @@
         </div>
 
     <div class="footer">
-        Powered by Biruk Design
+        POWERED BY BIRUK DESIGN
     </div>
 </div>
 
 <script>
-    // Logic to parse URL parameters and display data
     const params = new URLSearchParams(window.location.search);
     
-    document.getElementById('display-name').innerText = params.get('name') || "Enterprise Hub";
-    document.getElementById('display-slogan').innerText = params.get('slogan') || "Innovative Solutions";
-    document.getElementById('display-logo').src = params.get('logo') || "https://via.placeholder.com/100";
+    // Set Header Info
+    document.getElementById('display-name').innerText = params.get('name') || "Business Hub";
+    document.getElementById('display-slogan').innerText = params.get('slogan') || "Professional Solutions";
+    
+    const logoSrc = params.get('logo');
+    if(logoSrc) {
+        document.getElementById('display-logo').src = logoSrc;
+    }
 
+    // Generate Buttons
     const data = params.get('data') || "";
     const linksBox = document.getElementById('links-box');
 
     if (data) {
         const links = data.split(' | ');
         links.forEach(link => {
-            const [platform, value] = link.split(': ');
+            const parts = link.split(': ');
+            if (parts.length < 2) return;
+            
+            const platform = parts[0];
+            const value = parts.slice(1).join(': '); // Handles URLs containing colons
+            
             const btn = document.createElement('a');
             btn.className = 'action-button';
-            btn.href = value.includes('http') ? value : '#';
+            btn.href = value.trim();
+            btn.target = "_blank"; // Open in new tab
             
-            // Icon mapping
             let icon = '<i class="fa-solid fa-link"></i>';
-            if(platform.toLowerCase().includes('instagram')) icon = '<i class="fa-brands fa-instagram"></i>';
-            if(platform.toLowerCase().includes('telegram')) icon = '<i class="fa-brands fa-telegram"></i>';
-            if(platform.toLowerCase().includes('whatsapp')) icon = '<i class="fa-brands fa-whatsapp"></i>';
-            if(platform.toLowerCase().includes('menu')) icon = '<i class="fa-solid fa-utensils"></i>';
+            const pLower = platform.toLowerCase();
+            
+            if(pLower.includes('instagram')) icon = '<i class="fa-brands fa-instagram"></i>';
+            if(pLower.includes('facebook')) icon = '<i class="fa-brands fa-facebook"></i>';
+            if(pLower.includes('telegram')) icon = '<i class="fa-brands fa-telegram"></i>';
+            if(pLower.includes('whatsapp')) icon = '<i class="fa-brands fa-whatsapp"></i>';
+            if(pLower.includes('tiktok')) icon = '<i class="fa-brands fa-tiktok"></i>';
+            if(pLower.includes('youtube')) icon = '<i class="fa-brands fa-youtube"></i>';
 
             btn.innerHTML = `${icon} ${platform}`;
             linksBox.appendChild(btn);
