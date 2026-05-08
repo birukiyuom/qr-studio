@@ -131,7 +131,7 @@
                     <input type="text" id="client-name" placeholder="Display Name" oninput="updateLive()">
                     <input type="text" id="client-slogan" placeholder="Tagline/Slogan" oninput="updateLive()">
                 </div>
-                <label>Logo URL (Direct Image Link)</label>
+                <label>Logo URL (Center Image)</label>
                 <input type="text" id="client-logo-url" placeholder="https://site.com/logo.png" oninput="updateLive()">
 
                 <label>Social Connections</label>
@@ -230,31 +230,33 @@
 
     function updateLive() {
         let val = "";
+        const logoURL = document.getElementById('client-logo-url').value;
+
         if (currentMode === 'url') {
             val = document.getElementById('url-val').value || "https://google.com";
         } else if (currentMode === 'social') {
             const socialData = [
-                { n: 'Instagram', v: document.getElementById('s-ig').value },
-                { n: 'Facebook', v: document.getElementById('s-fb').value },
-                { n: 'Telegram', v: document.getElementById('s-tg').value },
-                { n: 'WhatsApp', v: document.getElementById('s-wa').value },
-                { n: 'YouTube', v: document.getElementById('s-yt').value },
-                { n: 'TikTok', v: document.getElementById('s-tt').value }
+                { n: 'IG', v: document.getElementById('s-ig').value },
+                { n: 'FB', v: document.getElementById('s-fb').value },
+                { n: 'TG', v: document.getElementById('s-tg').value },
+                { n: 'WA', v: document.getElementById('s-wa').value },
+                { n: 'YT', v: document.getElementById('s-yt').value },
+                { n: 'TT', v: document.getElementById('s-tt').value }
             ].filter(link => link.v.trim() !== "");
 
-            const dataString = socialData.map(l => `${l.n}: ${l.v}`).join(' | ');
+            const dataString = socialData.map(l => `${l.n}:${l.v}`).join('|');
             const profilePage = "https://birukiyuom.github.io/qr-studio/profile.html"; 
-            const name = document.getElementById('client-name').value || "Enterprise Hub";
-            const slogan = document.getElementById('client-slogan').value || "Innovative Solutions";
-            const logoURL = document.getElementById('client-logo-url').value || "";
-
-            val = `${profilePage}?name=${encodeURIComponent(name)}&slogan=${encodeURIComponent(slogan)}&logo=${encodeURIComponent(logoURL)}&data=${encodeURIComponent(dataString)}`;
+            const name = document.getElementById('client-name').value || "Enterprise";
+            
+            // Using a more compact data structure to avoid QR density failure
+            val = `${profilePage}?n=${encodeURIComponent(name)}&d=${encodeURIComponent(dataString)}`;
         } else {
             val = document.getElementById('text-val').value || " ";
         }
 
         qrCode.update({
             data: val,
+            image: logoURL || "",
             dotsOptions: { color: document.getElementById('qr-color').value, type: document.getElementById('qr-dots').value },
             backgroundOptions: { color: document.getElementById('qr-bg').value },
             cornersSquareOptions: { type: document.getElementById('qr-eyes').value, color: document.getElementById('qr-color').value }
@@ -265,22 +267,37 @@
         const project = {
             name: document.getElementById('proj-name').value || "Untitled",
             mode: currentMode,
-            design: { color: document.getElementById('qr-color').value, dots: document.getElementById('qr-dots').value }
+            data: document.getElementById(currentMode === 'url' ? 'url-val' : currentMode === 'text' ? 'text-val' : 'client-name').value,
+            design: { 
+                color: document.getElementById('qr-color').value, 
+                dots: document.getElementById('qr-dots').value,
+                logo: document.getElementById('client-logo-url').value
+            }
         };
         let projects = JSON.parse(localStorage.getItem('enterprise_qrs') || "[]");
         projects.unshift(project);
         localStorage.setItem('enterprise_qrs', JSON.stringify(projects));
         renderProjects();
-        alert("Project Saved to Local Storage!");
+        alert("Design Saved Successfully!");
     }
 
     function renderProjects() {
         const projects = JSON.parse(localStorage.getItem('enterprise_qrs') || "[]");
         document.getElementById('project-list').innerHTML = projects.map((p, i) => `
-            <div class="project-card">
+            <div class="project-card" onclick="loadProject(${i})">
                 <div><strong>${p.name}</strong><br><small>${p.mode.toUpperCase()}</small></div>
                 <button class="del-btn" onclick="deleteProj(${i}, event)"><i class="fa-solid fa-trash"></i></button>
             </div>`).join('');
+    }
+
+    function loadProject(i) {
+        const projects = JSON.parse(localStorage.getItem('enterprise_qrs'));
+        const p = projects[i];
+        document.getElementById('proj-name').value = p.name;
+        document.getElementById('qr-color').value = p.design.color;
+        document.getElementById('qr-dots').value = p.design.dots;
+        document.getElementById('client-logo-url').value = p.design.logo || "";
+        switchTab(p.mode);
     }
 
     function deleteProj(i, e) {
